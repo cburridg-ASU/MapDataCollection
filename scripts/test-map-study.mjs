@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import {
   isMapPointInsideRegion,
   isMapStudy,
@@ -42,6 +43,43 @@ const mapStudy = {
   ],
   materials: [],
 };
+
+const pilotStudy = JSON.parse(
+  await readFile(
+    new URL(
+      "../data/references/world-of-warcraft/classic/eastern-kingdoms/ironforge-dun-morogh/study.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
+assert.equal(isMapStudy(pilotStudy), true, "The committed pilot study must be valid.");
+assert.ok(pilotStudy.mapBoundary.length >= 3);
+assert.ok(pilotStudy.terrain.length >= 5);
+assert.ok(pilotStudy.landmarkDistances.length > 0);
+assert.ok(
+  pilotStudy.terrain.every(
+    (region) =>
+      region.roughness >= 0 &&
+      region.roughness <= 1 &&
+      region.vegetationDensity >= 0 &&
+      region.vegetationDensity <= 1 &&
+      region.groundMaterials.length > 0,
+  ),
+  "Terrain zones must include bounded roughness, vegetation density, and ground material categories.",
+);
+for (const distance of pilotStudy.landmarkDistances) {
+  const start = pilotStudy.landmarks.find(({ id }) => id === distance.fromId);
+  const end = pilotStudy.landmarks.find(({ id }) => id === distance.toId);
+  const expectedDistance = Math.hypot(
+    end.xMeters - start.xMeters,
+    end.zMeters - start.zMeters,
+  );
+  assert.ok(
+    Math.abs(distance.distanceMeters - expectedDistance) < 2,
+    `Distance ${distance.fromId} to ${distance.toId} must match its map positions.`,
+  );
+}
 
 assert.equal(
   isMapStudy(mapStudy),

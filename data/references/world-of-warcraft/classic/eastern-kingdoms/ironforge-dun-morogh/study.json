@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 2,
+  "editionId": "classic",
+  "editionTitle": "World of Warcraft",
+  "mapId": "eastern-kingdoms/ironforge-dun-morogh",
+  "mapName": "Ironforge, Dun Morogh",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft/Ironforge,%20Dun%20Morogh-775971",
+  "observedAt": "2026-11-04T15:20:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft/Ironforge,%20Dun%20Morogh-775971",
+      "description": "Scene appearance: snow-covered mountain slopes, exposed rock, conifers, and a settlement embedded in high terrain. Used for broad surface categories only."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/Dun_Morogh_(Classic)",
+      "description": "Zone map and geographic context. The map graphic was used only to estimate zone silhouette and relative locations; it is not included in this repository."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/images/WorldMap-DunMorogh-old.jpg",
+      "description": "Classic zone map image used for coarse digitization of the irregular boundary, terrain belts, water areas, and settlement positions."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Nominal WoW map coordinate frame: 64 by 64 tiles, each 533.333 yards. Converted at 0.9144 meters per yard. This is a grid extent, not a measured playable-zone footprint."
+    }
+  ],
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 map-grid frame (34,133.333 yards per side). The actual Dun Morogh playable footprint is an approximate irregular polygon; relative zone and feature positions were digitized coarsely from the published zone map. Physical extents and distances are low-confidence estimates, not in-game survey measurements."
+  },
+  "mapBoundary": [
+    { "x": 0.14, "z": 0.34 },
+    { "x": 0.23, "z": 0.27 },
+    { "x": 0.38, "z": 0.25 },
+    { "x": 0.48, "z": 0.31 },
+    { "x": 0.58, "z": 0.29 },
+    { "x": 0.72, "z": 0.33 },
+    { "x": 0.84, "z": 0.41 },
+    { "x": 0.89, "z": 0.53 },
+    { "x": 0.84, "z": 0.65 },
+    { "x": 0.76, "z": 0.72 },
+    { "x": 0.7, "z": 0.82 },
+    { "x": 0.57, "z": 0.83 },
+    { "x": 0.49, "z": 0.9 },
+    { "x": 0.38, "z": 0.85 },
+    { "x": 0.28, "z": 0.89 },
+    { "x": 0.18, "z": 0.82 },
+    { "x": 0.13, "z": 0.68 },
+    { "x": 0.1, "z": 0.52 }
+  ],
+  "landmarks": [
+    {
+      "id": "ironforge-footprint",
+      "label": "Major mountain settlement footprint",
+      "confidence": "low",
+      "notes": "Approximate center and compact footprint from the zone map. Represents a generic settlement massing area, not building geometry.",
+      "xMeters": 17390,
+      "zMeters": 9148,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 1900,
+      "depthMeters": 1200,
+      "heightMeters": 320,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "brewnall-footprint",
+      "label": "Western lakeside settlement footprint",
+      "confidence": "low",
+      "notes": "Approximate map position and settlement-scale footprint; no individual structures recorded.",
+      "xMeters": 9429,
+      "zMeters": 13251,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 500,
+      "depthMeters": 400,
+      "heightMeters": 55,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "kharanos-footprint",
+      "label": "Central village footprint",
+      "confidence": "low",
+      "notes": "Approximate map position and village-scale footprint; no individual structures recorded.",
+      "xMeters": 14558,
+      "zMeters": 15578,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 650,
+      "depthMeters": 500,
+      "heightMeters": 65,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "golbolar-footprint",
+      "label": "Eastern quarry disturbance footprint",
+      "confidence": "low",
+      "notes": "Approximate quarry area from map placement. Rendered as an original simple landform blockout, not a copied asset.",
+      "xMeters": 20017,
+      "zMeters": 17765,
+      "kind": "rock",
+      "elevationMeters": 0,
+      "widthMeters": 1100,
+      "depthMeters": 700,
+      "heightMeters": 110,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "coldridge-footprint",
+      "label": "Southwestern valley settlement footprint",
+      "confidence": "low",
+      "notes": "Approximate map position and settlement-scale footprint; no individual structures recorded.",
+      "xMeters": 9209,
+      "zMeters": 23354,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 500,
+      "depthMeters": 400,
+      "heightMeters": 55,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "ironforge-footprint",
+      "toId": "kharanos-footprint",
+      "distanceMeters": 7026,
+      "confidence": "low",
+      "notes": "Approximate center-to-center straight-line distance derived from the relative positions on the zone map and the nominal map-grid scale; not a measured travel distance."
+    },
+    {
+      "fromId": "ironforge-footprint",
+      "toId": "brewnall-footprint",
+      "distanceMeters": 8956,
+      "confidence": "low",
+      "notes": "Approximate center-to-center straight-line distance derived from the relative positions on the zone map and the nominal map-grid scale; not a measured travel distance."
+    },
+    {
+      "fromId": "kharanos-footprint",
+      "toId": "golbolar-footprint",
+      "distanceMeters": 5881,
+      "confidence": "low",
+      "notes": "Approximate center-to-center straight-line distance derived from the relative positions on the zone map and the nominal map-grid scale; not a measured travel distance."
+    },
+    {
+      "fromId": "kharanos-footprint",
+      "toId": "coldridge-footprint",
+      "distanceMeters": 9438,
+      "confidence": "low",
+      "notes": "Approximate center-to-center straight-line distance derived from the relative positions on the zone map and the nominal map-grid scale; not a measured travel distance."
+    },
+    {
+      "fromId": "brewnall-footprint",
+      "toId": "coldridge-footprint",
+      "distanceMeters": 10105,
+      "confidence": "low",
+      "notes": "Approximate center-to-center straight-line distance derived from the relative positions on the zone map and the nominal map-grid scale; not a measured travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "north-ridge",
+      "label": "Northern mountain ridge",
+      "confidence": "low",
+      "notes": "Broad ridge belt digitized from the zone map; relative elevation indicates prominence, not surveyed height.",
+      "terrainType": "ridge",
+      "biome": "snowy alpine rock",
+      "boundary": [
+        { "x": 0.19, "z": 0.34 },
+        { "x": 0.3, "z": 0.29 },
+        { "x": 0.47, "z": 0.33 },
+        { "x": 0.57, "z": 0.31 },
+        { "x": 0.72, "z": 0.35 },
+        { "x": 0.82, "z": 0.43 },
+        { "x": 0.73, "z": 0.47 },
+        { "x": 0.59, "z": 0.44 },
+        { "x": 0.48, "z": 0.46 },
+        { "x": 0.36, "z": 0.42 },
+        { "x": 0.25, "z": 0.45 }
+      ],
+      "relativeElevation": 0.62,
+      "roughness": 0.88,
+      "vegetationDensity": 0.12,
+      "groundMaterials": ["snow cover", "exposed rock"]
+    },
+    {
+      "id": "western-ridge",
+      "label": "Western mountain wall",
+      "confidence": "low",
+      "notes": "Irregular west-side ridge belt; surface class supported by the scene view, extent traced approximately.",
+      "terrainType": "cliff",
+      "biome": "snowy alpine rock",
+      "boundary": [
+        { "x": 0.14, "z": 0.4 },
+        { "x": 0.24, "z": 0.42 },
+        { "x": 0.27, "z": 0.55 },
+        { "x": 0.24, "z": 0.68 },
+        { "x": 0.29, "z": 0.81 },
+        { "x": 0.2, "z": 0.82 },
+        { "x": 0.14, "z": 0.68 },
+        { "x": 0.11, "z": 0.53 }
+      ],
+      "relativeElevation": 0.55,
+      "roughness": 0.94,
+      "vegetationDensity": 0.08,
+      "groundMaterials": ["exposed rock", "snow cover"]
+    },
+    {
+      "id": "southern-ridge",
+      "label": "Southern mountain barrier",
+      "confidence": "low",
+      "notes": "Mountain barrier separates the main basin from the southern adjoining region; outline approximate.",
+      "terrainType": "ridge",
+      "biome": "snowy alpine rock",
+      "boundary": [
+        { "x": 0.27, "z": 0.73 },
+        { "x": 0.4, "z": 0.74 },
+        { "x": 0.52, "z": 0.78 },
+        { "x": 0.66, "z": 0.75 },
+        { "x": 0.78, "z": 0.68 },
+        { "x": 0.74, "z": 0.8 },
+        { "x": 0.68, "z": 0.85 },
+        { "x": 0.56, "z": 0.86 },
+        { "x": 0.48, "z": 0.92 },
+        { "x": 0.37, "z": 0.87 },
+        { "x": 0.29, "z": 0.9 },
+        { "x": 0.23, "z": 0.83 }
+      ],
+      "relativeElevation": 0.7,
+      "roughness": 0.9,
+      "vegetationDensity": 0.04,
+      "groundMaterials": ["snow cover", "exposed rock"]
+    },
+    {
+      "id": "central-basin",
+      "label": "Forested central basin",
+      "confidence": "low",
+      "notes": "Low-relief basin between the ridge belts; conifer coverage is a coarse visual estimate.",
+      "terrainType": "valley",
+      "biome": "snowy conifer forest",
+      "boundary": [
+        { "x": 0.28, "z": 0.43 },
+        { "x": 0.39, "z": 0.43 },
+        { "x": 0.5, "z": 0.46 },
+        { "x": 0.6, "z": 0.44 },
+        { "x": 0.73, "z": 0.47 },
+        { "x": 0.78, "z": 0.55 },
+        { "x": 0.72, "z": 0.65 },
+        { "x": 0.62, "z": 0.7 },
+        { "x": 0.49, "z": 0.72 },
+        { "x": 0.37, "z": 0.68 },
+        { "x": 0.29, "z": 0.59 }
+      ],
+      "relativeElevation": -0.12,
+      "roughness": 0.34,
+      "vegetationDensity": 0.68,
+      "groundMaterials": ["snow cover", "frozen soil", "conifer litter"]
+    },
+    {
+      "id": "coldridge-valley",
+      "label": "Southwestern sheltered valley",
+      "confidence": "low",
+      "notes": "Approximate sheltered valley and starting-area basin from the zone map; no exact slopes or heights available.",
+      "terrainType": "valley",
+      "biome": "snowy conifer forest",
+      "boundary": [
+        { "x": 0.27, "z": 0.72 },
+        { "x": 0.37, "z": 0.7 },
+        { "x": 0.47, "z": 0.74 },
+        { "x": 0.46, "z": 0.83 },
+        { "x": 0.38, "z": 0.86 },
+        { "x": 0.29, "z": 0.85 },
+        { "x": 0.24, "z": 0.8 }
+      ],
+      "relativeElevation": -0.38,
+      "roughness": 0.28,
+      "vegetationDensity": 0.76,
+      "groundMaterials": ["snow cover", "frozen soil", "conifer litter"]
+    },
+    {
+      "id": "quarry",
+      "label": "Eastern quarry basin",
+      "confidence": "low",
+      "notes": "Position and rough footprint estimated from the map label; generated as an original rough landform.",
+      "terrainType": "cliff",
+      "biome": "exposed rock and frozen soil",
+      "boundary": [
+        { "x": 0.59, "z": 0.53 },
+        { "x": 0.69, "z": 0.52 },
+        { "x": 0.75, "z": 0.57 },
+        { "x": 0.72, "z": 0.64 },
+        { "x": 0.65, "z": 0.67 },
+        { "x": 0.58, "z": 0.63 }
+      ],
+      "relativeElevation": -0.02,
+      "roughness": 0.77,
+      "vegetationDensity": 0.04,
+      "groundMaterials": ["exposed rock", "frozen soil"]
+    },
+    {
+      "id": "iceflow-lake",
+      "label": "Northeastern lake",
+      "confidence": "low",
+      "notes": "Approximate lake area from the zone map. Surface treated as original frozen-water color, not a copied texture.",
+      "terrainType": "lake",
+      "biome": "frozen lake",
+      "boundary": [
+        { "x": 0.7, "z": 0.45 },
+        { "x": 0.74, "z": 0.44 },
+        { "x": 0.77, "z": 0.47 },
+        { "x": 0.75, "z": 0.52 },
+        { "x": 0.71, "z": 0.51 },
+        { "x": 0.68, "z": 0.48 }
+      ],
+      "relativeElevation": -0.52,
+      "roughness": 0.06,
+      "vegetationDensity": 0,
+      "groundMaterials": ["frozen fresh water", "snow crust"]
+    },
+    {
+      "id": "brewnall-lake",
+      "label": "Western lake",
+      "confidence": "low",
+      "notes": "Approximate lake area and relation to the western settlement from the zone map.",
+      "terrainType": "lake",
+      "biome": "frozen lake",
+      "boundary": [
+        { "x": 0.29, "z": 0.44 },
+        { "x": 0.34, "z": 0.42 },
+        { "x": 0.38, "z": 0.44 },
+        { "x": 0.37, "z": 0.49 },
+        { "x": 0.32, "z": 0.5 },
+        { "x": 0.28, "z": 0.47 }
+      ],
+      "relativeElevation": -0.48,
+      "roughness": 0.05,
+      "vegetationDensity": 0,
+      "groundMaterials": ["frozen fresh water", "snow crust"]
+    }
+  ],
+  "materials": [],
+  "summary": "Coarse map-relative pilot, not a surveyed terrain model. The only physical scale is the documented nominal map-coordinate grid. The playable-zone boundary, internal regions, landmark footprints, and pair distances are estimated from a published zone map and are low confidence. Heights are relative elevation bands; exact meters above sea level are unavailable. All generated geometry and materials are original."
+}

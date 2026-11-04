@@ -73,6 +73,22 @@ export interface TerrainRegionObservation extends ObservationMetadata {
   biome: string;
   boundary: MapRelativePoint[];
   relativeElevation: number;
+  roughness?: number;
+  vegetationDensity?: number;
+  groundMaterials?: string[];
+}
+
+export interface LandmarkDistanceObservation {
+  fromId: string;
+  toId: string;
+  distanceMeters: number;
+  confidence: ObservationConfidence;
+  notes: string;
+}
+
+export interface MapStudySource {
+  url: string;
+  description: string;
 }
 
 export interface MaterialObservation extends MeterPosition {
@@ -99,7 +115,11 @@ export interface MapStudy {
     terrainRegions: "normalized-map-relative";
   };
   calibration: MapCalibration | null;
+  mapBoundary?: MapRelativePoint[];
+  sources?: MapStudySource[];
+  summary?: string;
   landmarks: LandmarkObservation[];
+  landmarkDistances?: LandmarkDistanceObservation[];
   terrain: TerrainRegionObservation[];
   materials: MaterialObservation[];
 }
@@ -316,8 +336,46 @@ function isTerrainRegion(value: unknown): value is TerrainRegionObservation {
     Number.isFinite(value.relativeElevation) &&
     value.relativeElevation >= -1 &&
     value.relativeElevation <= 1 &&
+    (value.roughness === undefined ||
+      (typeof value.roughness === "number" &&
+        Number.isFinite(value.roughness) &&
+        value.roughness >= 0 &&
+        value.roughness <= 1)) &&
+    (value.vegetationDensity === undefined ||
+      (typeof value.vegetationDensity === "number" &&
+        Number.isFinite(value.vegetationDensity) &&
+        value.vegetationDensity >= 0 &&
+        value.vegetationDensity <= 1)) &&
+    (value.groundMaterials === undefined ||
+      (Array.isArray(value.groundMaterials) &&
+        value.groundMaterials.every((material) => typeof material === "string"))) &&
     Array.isArray(value.boundary) &&
     validRegionBoundary(value.boundary)
+  );
+}
+
+function isLandmarkDistance(
+  value: unknown,
+): value is LandmarkDistanceObservation {
+  return (
+    isRecord(value) &&
+    typeof value.fromId === "string" &&
+    typeof value.toId === "string" &&
+    value.fromId !== value.toId &&
+    typeof value.distanceMeters === "number" &&
+    Number.isFinite(value.distanceMeters) &&
+    value.distanceMeters > 0 &&
+    ["low", "medium", "high"].includes(String(value.confidence)) &&
+    typeof value.notes === "string"
+  );
+}
+
+function isMapStudySource(value: unknown): value is MapStudySource {
+  return (
+    isRecord(value) &&
+    typeof value.url === "string" &&
+    /^https:\/\//.test(value.url) &&
+    typeof value.description === "string"
   );
 }
 
@@ -382,6 +440,20 @@ function isLegacyMapStudy(value: unknown): value is LegacyMapStudy {
   }
   const calibration = value.calibration;
   if (calibration !== null && !isCalibration(calibration)) return false;
+  if (
+    (value.mapBoundary !== undefined &&
+      (!Array.isArray(value.mapBoundary) ||
+        !validRegionBoundary(value.mapBoundary))) ||
+    (value.sources !== undefined &&
+      (!Array.isArray(value.sources) ||
+        !value.sources.every(isMapStudySource))) ||
+    (value.summary !== undefined && typeof value.summary !== "string") ||
+    (value.landmarkDistances !== undefined &&
+      (!Array.isArray(value.landmarkDistances) ||
+        !value.landmarkDistances.every(isLandmarkDistance)))
+  ) {
+    return false;
+  }
   if (
     calibration === null &&
     value.landmarks.length + value.materials.length > 0
@@ -489,6 +561,10 @@ export function isMapStudy(value: unknown): value is MapStudy {
     return false;
   }
 
+  const landmarks = value.landmarks;
+  const landmarkDistances = Array.isArray(value.landmarkDistances)
+    ? value.landmarkDistances
+    : [];
   const calibration = value.calibration;
   if (calibration !== null && !isCalibration(calibration)) return false;
 
@@ -506,12 +582,26 @@ export function isMapStudy(value: unknown): value is MapStudy {
   };
 
   return (
-    value.landmarks.every(
+    landmarks.every(
       (observation) =>
         isLandmark(observation) &&
         calibration !== null &&
         inMeterBounds(observation),
     ) &&
+    landmarkDistances.every((distance: unknown) => {
+      if (!isLandmarkDistance(distance)) return false;
+      const landmarkIds = new Set(
+        landmarks.map((landmark) =>
+          isRecord(landmark) && typeof landmark.id === "string"
+            ? landmark.id
+            : "",
+        ),
+      );
+      return (
+        landmarkIds.has(distance.fromId) &&
+        landmarkIds.has(distance.toId)
+      );
+    }) &&
     value.terrain.every(isTerrainRegion) &&
     value.materials.every(
       (observation) =>

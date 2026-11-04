@@ -1,6 +1,6 @@
 import "./style.css";
 import { loadCatalog, type CatalogEdition, type CatalogMap } from "./catalog";
-import { getBundledMapStudy } from "./map-study-corpus";
+import { getAvailableMapStudies } from "./map-study-corpus";
 import type { MapStudy } from "./map-study";
 import { WorldBuilder, type BiomeId, type WorldSettings } from "./world-builder";
 
@@ -20,6 +20,7 @@ const builder = new WorldBuilder(
 interface MapChoice {
   edition: CatalogEdition;
   map: CatalogMap;
+  study: MapStudy;
 }
 
 const mapChoices = new Map<string, MapChoice>();
@@ -37,25 +38,22 @@ function studyObservationCount(study: MapStudy): number {
   return (
     study.landmarks.length +
     study.terrain.length +
-    study.materials.length
+    study.materials.length +
+    (study.landmarkDistances?.length ?? 0)
   );
 }
 
 function setStudyStatus(choice: MapChoice): void {
-  selectedStudy = getBundledMapStudy(choice.edition.id, choice.map.id);
-  const count = selectedStudy ? studyObservationCount(selectedStudy) : 0;
-  if (count) {
-    elements.status.textContent = `${count} collected observations`;
-  } else if (selectedStudy?.calibration) {
-    elements.status.textContent = "Calibrated bounds; no terrain observations.";
-  } else {
-    elements.status.textContent =
-      "No collected study; this map will use generic procedural terrain.";
-  }
+  selectedStudy = choice.study;
+  const count = studyObservationCount(selectedStudy);
+  elements.status.textContent =
+    `${selectedStudy.terrain.length} terrain zones · ` +
+    `${selectedStudy.landmarks.length} location footprints · ` +
+    `${count} total records`;
 }
 
-function biomeForStudy(study: MapStudy | undefined): BiomeId {
-  const description = study?.terrain.map((region) => region.biome).join(" ");
+function biomeForStudy(study: MapStudy): BiomeId {
+  const description = study.terrain.map((region) => region.biome).join(" ");
   if (/tundra|snow|ice|frost|glacier/i.test(description ?? "")) return "tundra";
   if (/desert|sand|arid|badland/i.test(description ?? "")) return "desert";
   if (/swamp|marsh|wetland|bog|fen/i.test(description ?? "")) return "swamp";
@@ -74,25 +72,23 @@ function createSettings(choice: MapChoice): WorldSettings {
     seed: `generation-${crypto.randomUUID()}`,
     scale: 240,
     relief: 42,
-    biome: biomeForStudy(selectedStudy),
+    biome: biomeForStudy(choice.study),
     vegetation: true,
-    ruins: true,
+    ruins: false,
   };
 }
 
 async function generateMap(): Promise<void> {
   const choice = selectedChoice();
-  if (!choice) return;
+  if (!choice || !selectedStudy) return;
 
   elements.generate.disabled = true;
   elements.loading.hidden = false;
   elements.error.hidden = true;
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => resolve()),
-  );
+  await new Promise<void>((resolve) => setTimeout(resolve, 0));
 
   try {
-    builder.build(createSettings(choice), selectedStudy ?? null);
+    builder.build(createSettings(choice), selectedStudy);
     elements.mapName.textContent = `${choice.map.name} · ${choice.edition.title}`;
   } catch (error) {
     elements.error.textContent =
@@ -104,16 +100,31 @@ async function generateMap(): Promise<void> {
   }
 }
 
-function populateMaps(editions: CatalogEdition[]): void {
+function populateMaps(
+  editions: CatalogEdition[],
+  studies: MapStudy[],
+): void {
   elements.map.replaceChildren();
   mapChoices.clear();
+  const studiesByMap = new Map(
+    studies.map((study) => [`${study.editionId}|${study.mapId}`, study]),
+  );
 
   for (const edition of editions) {
+    const availableMaps = edition.maps.filter((map) =>
+      studiesByMap.has(mapKey(edition.id, map.id)),
+    );
+    if (availableMaps.length === 0) continue;
+
     const group = document.createElement("optgroup");
     group.label = edition.title;
-    for (const map of edition.maps) {
+    for (const map of availableMaps) {
       const key = mapKey(edition.id, map.id);
-      mapChoices.set(key, { edition, map });
+      mapChoices.set(key, {
+        edition,
+        map,
+        study: studiesByMap.get(key)!,
+      });
       const option = document.createElement("option");
       option.value = key;
       option.textContent = map.name;
@@ -122,6 +133,13 @@ function populateMaps(editions: CatalogEdition[]): void {
     elements.map.append(group);
   }
 
+  if (mapChoices.size === 0) {
+    const option = document.createElement("option");
+    option.textContent = "No collected map data";
+    elements.map.append(option);
+    elements.status.textContent =
+      "No complete map studies are available. Generation is disabled until data is added.";
+  }
   elements.map.disabled = mapChoices.size === 0;
   elements.generate.disabled = mapChoices.size === 0;
   const choice = selectedChoice();
@@ -135,7 +153,7 @@ elements.map.addEventListener("change", () => {
 elements.generate.addEventListener("click", () => void generateMap());
 
 void loadCatalog()
-  .then((catalog) => populateMaps(catalog.editions))
+  .then((catalog) => populateMaps(catalog.editions, getAvailableMapStudies()))
   .catch((error: unknown) => {
     elements.map.replaceChildren();
     elements.map.disabled = true;

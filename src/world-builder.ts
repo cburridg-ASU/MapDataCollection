@@ -325,7 +325,18 @@ function regionPalette(
   observation: TerrainRegionObservation,
   fallback: BiomePalette,
 ): BiomePalette {
-  const palette = paletteForBiome(observation.biome, fallback);
+  let palette = paletteForBiome(observation.biome, fallback);
+  const groundMaterials = observation.groundMaterials?.join(" ").toLowerCase() ?? "";
+  if (/bedrock|exposed rock|stone/.test(groundMaterials)) {
+    const stone = new Color(palette.stone);
+    palette = {
+      ...palette,
+      bands: palette.bands.map(([height], index) => [
+        height,
+        stone.clone().lerp(new Color("#b7c0c1"), index / (palette.bands.length - 1)).getStyle(),
+      ]),
+    };
+  }
   if (observation.terrainType === "river" || observation.terrainType === "lake") {
     return {
       ...palette,
@@ -367,6 +378,20 @@ function regionRoughness(terrainType: TerrainRegionObservation["terrainType"]): 
     case "other":
       return 0.4;
   }
+}
+
+function observedRegionRoughness(region: TerrainRegionObservation): number {
+  return region.roughness ?? regionRoughness(region.terrainType);
+}
+
+function regionAtPoint(
+  study: MapStudy,
+  normalizedX: number,
+  normalizedZ: number,
+): TerrainRegionObservation | undefined {
+  return [...study.terrain].reverse().find((region) =>
+    isMapPointInsideRegion(region.boundary, normalizedX, normalizedZ),
+  );
 }
 
 function disposeObject(object: Object3D): void {
@@ -450,6 +475,15 @@ export class WorldBuilder {
   }
 
   build(settings: WorldSettings, study: MapStudy | null = null): void {
+    if (
+      !study ||
+      !study.calibration ||
+      !study.mapBoundary ||
+      study.terrain.length === 0
+    ) {
+      throw new Error("This map has no complete collected terrain study yet.");
+    }
+
     const palette = palettes[settings.biome];
     if (this.scene.children.includes(this.world)) {
       this.scene.remove(this.world);
@@ -521,7 +555,7 @@ export class WorldBuilder {
         const regionHeight =
           region.relativeElevation * relief +
           terrainHeight(normalizedX, normalizedZ, seed, relief) *
-            regionRoughness(region.terrainType);
+            observedRegionRoughness(region);
         height = height * (1 - weight) + regionHeight * weight;
         activeRegions.push({ region, weight });
       }
@@ -553,6 +587,27 @@ export class WorldBuilder {
       colors.push(color.r, color.g, color.b);
     }
 
+    const index = geometry.getIndex();
+    if (index) {
+      const clippedIndices: number[] = [];
+      for (let triangle = 0; triangle < index.count; triangle += 3) {
+        const a = index.getX(triangle);
+        const b = index.getX(triangle + 1);
+        const c = index.getX(triangle + 2);
+        const centerX =
+          (positions.getX(a) + positions.getX(b) + positions.getX(c)) /
+          (3 * sizeX) +
+          0.5;
+        const centerZ =
+          (positions.getY(a) + positions.getY(b) + positions.getY(c)) /
+          (3 * sizeZ) +
+          0.5;
+        if (isMapPointInsideRegion(study.mapBoundary, centerX, centerZ)) {
+          clippedIndices.push(a, b, c);
+        }
+      }
+      geometry.setIndex(clippedIndices);
+    }
     geometry.setAttribute("color", new BufferAttribute(new Float32Array(colors), 3));
     geometry.rotateX(-Math.PI / 2);
     geometry.computeVertexNormals();
@@ -567,25 +622,6 @@ export class WorldBuilder {
     terrain.name = "Procedural Terrain";
     terrain.receiveShadow = true;
     this.world.add(terrain);
-
-    const waterAppearance = observedColor(study, "water", palette.water);
-    const waterMaterial = new MeshStandardMaterial({
-      color: waterAppearance.color,
-      roughness: 0.27,
-      metalness: 0.08,
-      transparent: true,
-      opacity: 0.84,
-      wireframe: this.wireframe,
-    });
-    this.baseMaterials.push(waterMaterial);
-    waterMaterial.name = waterAppearance.label
-      ? `Original water material · observed ${waterAppearance.label}`
-      : "Original generated water material";
-    const water = new Mesh(new PlaneGeometry(sizeX, sizeZ), waterMaterial);
-    water.name = "Water Plane";
-    water.rotation.x = -Math.PI / 2;
-    water.position.y = -0.002;
-    this.world.add(water);
 
     const vegetationAppearance = observedColor(
       study,
@@ -628,9 +664,19 @@ export class WorldBuilder {
       for (let index = 0; index < count; index += 1) {
         const x = random() * sizeX * 0.92 - sizeX * 0.46;
         const z = random() * sizeZ * 0.92 - sizeZ * 0.46;
+        const normalizedX = x / sizeX + 0.5;
+        const normalizedZ = z / sizeZ + 0.5;
+        const region = regionAtPoint(study, normalizedX, normalizedZ);
+        if (
+          !isMapPointInsideRegion(study.mapBoundary, normalizedX, normalizedZ) ||
+          !region?.vegetationDensity ||
+          random() > region.vegetationDensity
+        ) {
+          continue;
+        }
         const height = terrainHeight(
-          x / sizeX + 0.5,
-          z / sizeZ + 0.5,
+          normalizedX,
+          normalizedZ,
           seed,
           relief,
         );
@@ -680,9 +726,19 @@ export class WorldBuilder {
       for (let index = 0; index < 110; index += 1) {
         const x = random() * sizeX * 0.94 - sizeX * 0.47;
         const z = random() * sizeZ * 0.94 - sizeZ * 0.47;
+        const normalizedX = x / sizeX + 0.5;
+        const normalizedZ = z / sizeZ + 0.5;
+        const region = regionAtPoint(study, normalizedX, normalizedZ);
+        if (
+          !isMapPointInsideRegion(study.mapBoundary, normalizedX, normalizedZ) ||
+          !region ||
+          observedRegionRoughness(region) < 0.65
+        ) {
+          continue;
+        }
         const height = terrainHeight(
-          x / sizeX + 0.5,
-          z / sizeZ + 0.5,
+          normalizedX,
+          normalizedZ,
           seed,
           relief,
         );
@@ -715,6 +771,15 @@ export class WorldBuilder {
         const radius = (18 + random() * size * 0.22) * sizeRatio;
         const x = Math.cos(angle) * radius;
         const z = Math.sin(angle) * radius;
+        if (
+          !isMapPointInsideRegion(
+            study.mapBoundary,
+            x / sizeX + 0.5,
+            z / sizeZ + 0.5,
+          )
+        ) {
+          continue;
+        }
         const height = terrainHeight(
           x / sizeX + 0.5,
           z / sizeZ + 0.5,
@@ -847,6 +912,7 @@ export class WorldBuilder {
     this.scene.background = new Color(palette.sky);
     this.renderer.setClearColor(palette.sky);
     this.resetCamera();
+    this.renderer.render(this.scene, this.camera);
   }
 
   setWireframe(enabled: boolean): void {

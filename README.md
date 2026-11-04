@@ -1,12 +1,14 @@
 # MapDataCollection
 
-Choose a reference map and press **Generate**. The builder uses the matching
-study in `data/references/world-of-warcraft/` when one exists. Maps without
-collected observations produce a generic procedural preview, clearly labeled
-as such; the map-name catalog alone does not provide geography.
+Choose a studied reference map and press **Generate**. The builder only offers
+maps with a committed terrain study and shapes its terrain to that study's
+irregular zone boundary and observed terrain regions. It does not generate a
+generic fallback for maps without data.
 
-The current repository has no committed map studies yet. Do not treat generated
-previews for unstudied maps as data-based reconstructions.
+The current dataset contains one low-confidence pilot for Ironforge / Dun
+Morogh. Its playable-zone outline and settlement spacing are approximate; its
+31.2 km extent is the documented WoW map-coordinate grid, not a surveyed zone
+footprint. The terrain height is relative, not absolute elevation.
 
 ## Run locally
 
@@ -22,9 +24,10 @@ add game textures, models, or screenshots to this repository.
 
 Place validated study JSON at
 `data/references/world-of-warcraft/<edition-id>/<map-id>/study.json`.
-Studies contain normalized terrain/biome regions and optional calibrated
-measurements, landmarks, and material descriptions. The app loads committed
-studies at build time.
+Studies contain zone and terrain polygons, normalized roughness/elevation,
+ground material categories, vegetation density, and optional measurements and
+landmark spacing. The app loads committed studies at build time and only offers
+maps with complete zone and terrain data.
 
 ## GitHub Pages
 

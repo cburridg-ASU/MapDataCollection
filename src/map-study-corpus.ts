@@ -31,3 +31,14 @@ export function getBundledMapStudy(
   const study = studies.get(`${editionId}:${mapId}`);
   return study ? structuredClone(study) : undefined;
 }
+
+export function getAvailableMapStudies(): MapStudy[] {
+  return [...studies.values()]
+    .filter(
+      (study) =>
+        study.calibration !== null &&
+        study.mapBoundary !== undefined &&
+        study.terrain.length > 0,
+    )
+    .map((study) => structuredClone(study));
+}
