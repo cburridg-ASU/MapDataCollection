@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "editionId": "the-burning-crusade",
+  "editionTitle": "World of Warcraft: The Burning Crusade",
+  "mapId": "outland/area-52-netherstorm",
+  "mapName": "Area 52, Netherstorm",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft",
+  "observedAt": "2026-11-04T15:40:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 ADT grid frame (31,221.333 m per side). This shared coordinate frame is not the measured scene extent or playable-zone size. Boundary, subregion positions, generic feature anchors, and physical footprints in this pilot are low-confidence estimates."
+  },
+  "mapBoundary": [
+    {
+      "x": 0.8306,
+      "z": 0.515
+    },
+    {
+      "x": 0.8206,
+      "z": 0.6749
+    },
+    {
+      "x": 0.681,
+      "z": 0.7986
+    },
+    {
+      "x": 0.4824,
+      "z": 0.7732
+    },
+    {
+      "x": 0.338,
+      "z": 0.7081
+    },
+    {
+      "x": 0.1779,
+      "z": 0.6368
+    },
+    {
+      "x": 0.0878,
+      "z": 0.4813
+    },
+    {
+      "x": 0.2082,
+      "z": 0.3408
+    },
+    {
+      "x": 0.3599,
+      "z": 0.2689
+    },
+    {
+      "x": 0.5218,
+      "z": 0.1621
+    },
+    {
+      "x": 0.7324,
+      "z": 0.2014
+    },
+    {
+      "x": 0.7991,
+      "z": 0.3729
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft",
+      "description": "Noclip World of Warcraft scene catalog; the catalog label identifies the reference scene (Area 52, Netherstorm) only. No game geometry, textures, or assets were extracted."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/Netherstorm",
+      "description": "Netherstorm article used for zone naming and broad environmental context. This concept study does not claim that its polygons or measurements were traced from the article."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Used only to document the nominal 64x64 map-grid frame; not treated as playable-zone dimensions."
+    }
+  ],
+  "summary": "Low-confidence concept study for testing map-driven generation across varied zones. The irregular boundary, one zone-wide baseline and five terrain-region polygons, generic feature footprints, and spacing values are estimates, not surveyed measurements or observations extracted from Noclip. Replace them with source-supported observations before treating this as a reference map.",
+  "landmarks": [
+    {
+      "id": "generic-footprint-1",
+      "label": "Named scene-anchor footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 15610.67,
+      "zMeters": 15610.67,
+      "kind": "structure",
+      "elevationMeters": -35,
+      "widthMeters": 650,
+      "depthMeters": 480,
+      "heightMeters": 91,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-2",
+      "label": "Secondary settlement or route footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 9054.19,
+      "zMeters": 20918.29,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 360,
+      "depthMeters": 280,
+      "heightMeters": 35,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-3",
+      "label": "Prominent terrain massing footprint (generic landform)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 22791.57,
+      "zMeters": 9678.61,
+      "kind": "rock",
+      "elevationMeters": 35,
+      "widthMeters": 1210,
+      "depthMeters": 720,
+      "heightMeters": 110,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "generic-footprint-1",
+      "toId": "generic-footprint-2",
+      "distanceMeters": 8435.54,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    },
+    {
+      "fromId": "generic-footprint-2",
+      "toId": "generic-footprint-3",
+      "distanceMeters": 17749.54,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "regional-ground-cover",
+      "label": "Zone-wide ground-cover baseline",
+      "confidence": "low",
+      "notes": "Broad zone-level biome field used as the study-based baseline; not a measured soil classification or a traced material boundary.",
+      "terrainType": "plain",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.8306,
+          "z": 0.515
+        },
+        {
+          "x": 0.8206,
+          "z": 0.6749
+        },
+        {
+          "x": 0.681,
+          "z": 0.7986
+        },
+        {
+          "x": 0.4824,
+          "z": 0.7732
+        },
+        {
+          "x": 0.338,
+          "z": 0.7081
+        },
+        {
+          "x": 0.1779,
+          "z": 0.6368
+        },
+        {
+          "x": 0.0878,
+          "z": 0.4813
+        },
+        {
+          "x": 0.2082,
+          "z": 0.3408
+        },
+        {
+          "x": 0.3599,
+          "z": 0.2689
+        },
+        {
+          "x": 0.5218,
+          "z": 0.1621
+        },
+        {
+          "x": 0.7324,
+          "z": 0.2014
+        },
+        {
+          "x": 0.7991,
+          "z": 0.3729
+        }
+      ],
+      "relativeElevation": 0,
+      "roughness": 0.1,
+      "vegetationDensity": 0.04,
+      "groundMaterials": [
+        "exposed rock",
+        "crystal-like ground",
+        "dry soil"
+      ]
+    },
+    {
+      "id": "region-1",
+      "label": "northwestern suspended ridge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "ridge",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.3931,
+          "z": 0.3121
+        },
+        {
+          "x": 0.3253,
+          "z": 0.3603
+        },
+        {
+          "x": 0.2355,
+          "z": 0.3694
+        },
+        {
+          "x": 0.1465,
+          "z": 0.3469
+        },
+        {
+          "x": 0.1185,
+          "z": 0.2805
+        },
+        {
+          "x": 0.1118,
+          "z": 0.2101
+        },
+        {
+          "x": 0.1886,
+          "z": 0.1693
+        },
+        {
+          "x": 0.2758,
+          "z": 0.1478
+        },
+        {
+          "x": 0.3576,
+          "z": 0.1818
+        },
+        {
+          "x": 0.3976,
+          "z": 0.2428
+        }
+      ],
+      "relativeElevation": 0.354,
+      "roughness": 0.79,
+      "vegetationDensity": 0.06,
+      "groundMaterials": [
+        "exposed rock",
+        "crystal-like ground"
+      ]
+    },
+    {
+      "id": "region-2",
+      "label": "northeastern arid shelf",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "plain",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.8606,
+          "z": 0.3458
+        },
+        {
+          "x": 0.7878,
+          "z": 0.3807
+        },
+        {
+          "x": 0.7048,
+          "z": 0.3807
+        },
+        {
+          "x": 0.6304,
+          "z": 0.3475
+        },
+        {
+          "x": 0.6174,
+          "z": 0.2829
+        },
+        {
+          "x": 0.6263,
+          "z": 0.2165
+        },
+        {
+          "x": 0.7046,
+          "z": 0.1884
+        },
+        {
+          "x": 0.7879,
+          "z": 0.1771
+        },
+        {
+          "x": 0.853,
+          "z": 0.2204
+        },
+        {
+          "x": 0.8794,
+          "z": 0.2812
+        }
+      ],
+      "relativeElevation": 0.068,
+      "roughness": 0.42,
+      "vegetationDensity": 0.04,
+      "groundMaterials": [
+        "dry soil",
+        "gravel"
+      ]
+    },
+    {
+      "id": "region-3",
+      "label": "central fractured highland",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "hill",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.596,
+          "z": 0.5877
+        },
+        {
+          "x": 0.519,
+          "z": 0.6134
+        },
+        {
+          "x": 0.4405,
+          "z": 0.6038
+        },
+        {
+          "x": 0.3793,
+          "z": 0.5547
+        },
+        {
+          "x": 0.3787,
+          "z": 0.4819
+        },
+        {
+          "x": 0.4018,
+          "z": 0.4103
+        },
+        {
+          "x": 0.4813,
+          "z": 0.3912
+        },
+        {
+          "x": 0.5625,
+          "z": 0.3896
+        },
+        {
+          "x": 0.6128,
+          "z": 0.4482
+        },
+        {
+          "x": 0.6278,
+          "z": 0.5187
+        }
+      ],
+      "relativeElevation": 0.197,
+      "roughness": 0.67,
+      "vegetationDensity": 0.03,
+      "groundMaterials": [
+        "exposed rock",
+        "crystal-like ground"
+      ]
+    },
+    {
+      "id": "region-4",
+      "label": "southwestern basin depression",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "valley",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.3617,
+          "z": 0.8348
+        },
+        {
+          "x": 0.2728,
+          "z": 0.8458
+        },
+        {
+          "x": 0.1889,
+          "z": 0.8277
+        },
+        {
+          "x": 0.1354,
+          "z": 0.7716
+        },
+        {
+          "x": 0.1472,
+          "z": 0.7036
+        },
+        {
+          "x": 0.188,
+          "z": 0.6407
+        },
+        {
+          "x": 0.2775,
+          "z": 0.6343
+        },
+        {
+          "x": 0.3661,
+          "z": 0.6437
+        },
+        {
+          "x": 0.4065,
+          "z": 0.7068
+        },
+        {
+          "x": 0.4112,
+          "z": 0.7748
+        }
+      ],
+      "relativeElevation": -0.163,
+      "roughness": 0.39,
+      "vegetationDensity": 0.07,
+      "groundMaterials": [
+        "dry soil",
+        "gravel"
+      ]
+    },
+    {
+      "id": "region-5",
+      "label": "southeastern broken escarpment",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "cliff",
+      "biome": "Arid floating highlands and exposed arcane terrain",
+      "boundary": [
+        {
+          "x": 0.7699,
+          "z": 0.8248
+        },
+        {
+          "x": 0.672,
+          "z": 0.8218
+        },
+        {
+          "x": 0.5848,
+          "z": 0.7903
+        },
+        {
+          "x": 0.5438,
+          "z": 0.7162
+        },
+        {
+          "x": 0.5694,
+          "z": 0.6395
+        },
+        {
+          "x": 0.6295,
+          "z": 0.5746
+        },
+        {
+          "x": 0.7265,
+          "z": 0.5806
+        },
+        {
+          "x": 0.8199,
+          "z": 0.6046
+        },
+        {
+          "x": 0.8461,
+          "z": 0.6839
+        },
+        {
+          "x": 0.8383,
+          "z": 0.7635
+        }
+      ],
+      "relativeElevation": 0.415,
+      "roughness": 0.86,
+      "vegetationDensity": 0.02,
+      "groundMaterials": [
+        "exposed rock",
+        "dry soil"
+      ]
+    }
+  ],
+  "materials": []
+}

@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "editionId": "the-burning-crusade",
+  "editionTitle": "World of Warcraft: The Burning Crusade",
+  "mapId": "outland/black-temple-shadowmoon-valley",
+  "mapName": "Black Temple, Shadowmoon Valley",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft",
+  "observedAt": "2026-11-04T15:40:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 ADT grid frame (31,221.333 m per side). This shared coordinate frame is not the measured scene extent or playable-zone size. Boundary, subregion positions, generic feature anchors, and physical footprints in this pilot are low-confidence estimates."
+  },
+  "mapBoundary": [
+    {
+      "x": 0.8276,
+      "z": 0.5
+    },
+    {
+      "x": 0.831,
+      "z": 0.6638
+    },
+    {
+      "x": 0.6659,
+      "z": 0.7463
+    },
+    {
+      "x": 0.5,
+      "z": 0.8456
+    },
+    {
+      "x": 0.3278,
+      "z": 0.7557
+    },
+    {
+      "x": 0.1545,
+      "z": 0.671
+    },
+    {
+      "x": 0.1766,
+      "z": 0.5
+    },
+    {
+      "x": 0.1581,
+      "z": 0.3308
+    },
+    {
+      "x": 0.332,
+      "z": 0.2506
+    },
+    {
+      "x": 0.5,
+      "z": 0.1436
+    },
+    {
+      "x": 0.6764,
+      "z": 0.2381
+    },
+    {
+      "x": 0.831,
+      "z": 0.3362
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft",
+      "description": "Noclip World of Warcraft scene catalog; the catalog label identifies the reference scene (Black Temple, Shadowmoon Valley) only. No game geometry, textures, or assets were extracted."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/Shadowmoon_Valley",
+      "description": "Shadowmoon Valley article used for zone naming and broad environmental context. This concept study does not claim that its polygons or measurements were traced from the article."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Used only to document the nominal 64x64 map-grid frame; not treated as playable-zone dimensions."
+    }
+  ],
+  "summary": "Low-confidence concept study for testing map-driven generation across varied zones. The irregular boundary, one zone-wide baseline and five terrain-region polygons, generic feature footprints, and spacing values are estimates, not surveyed measurements or observations extracted from Noclip. Replace them with source-supported observations before treating this as a reference map.",
+  "landmarks": [
+    {
+      "id": "generic-footprint-1",
+      "label": "Named scene-anchor footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 16235.09,
+      "zMeters": 15610.67,
+      "kind": "structure",
+      "elevationMeters": -35,
+      "widthMeters": 990,
+      "depthMeters": 610,
+      "heightMeters": 55,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-2",
+      "label": "Secondary settlement or route footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 9678.61,
+      "zMeters": 21230.51,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 550,
+      "depthMeters": 360,
+      "heightMeters": 57,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-3",
+      "label": "Prominent terrain massing footprint (generic landform)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 22479.36,
+      "zMeters": 9366.4,
+      "kind": "rock",
+      "elevationMeters": 35,
+      "widthMeters": 850,
+      "depthMeters": 1020,
+      "heightMeters": 254,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "generic-footprint-1",
+      "toId": "generic-footprint-2",
+      "distanceMeters": 8635.39,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    },
+    {
+      "fromId": "generic-footprint-2",
+      "toId": "generic-footprint-3",
+      "distanceMeters": 17453.26,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "regional-ground-cover",
+      "label": "Zone-wide ground-cover baseline",
+      "confidence": "low",
+      "notes": "Broad zone-level biome field used as the study-based baseline; not a measured soil classification or a traced material boundary.",
+      "terrainType": "plain",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.8276,
+          "z": 0.5
+        },
+        {
+          "x": 0.831,
+          "z": 0.6638
+        },
+        {
+          "x": 0.6659,
+          "z": 0.7463
+        },
+        {
+          "x": 0.5,
+          "z": 0.8456
+        },
+        {
+          "x": 0.3278,
+          "z": 0.7557
+        },
+        {
+          "x": 0.1545,
+          "z": 0.671
+        },
+        {
+          "x": 0.1766,
+          "z": 0.5
+        },
+        {
+          "x": 0.1581,
+          "z": 0.3308
+        },
+        {
+          "x": 0.332,
+          "z": 0.2506
+        },
+        {
+          "x": 0.5,
+          "z": 0.1436
+        },
+        {
+          "x": 0.6764,
+          "z": 0.2381
+        },
+        {
+          "x": 0.831,
+          "z": 0.3362
+        }
+      ],
+      "relativeElevation": 0,
+      "roughness": 0.1,
+      "vegetationDensity": 0.03,
+      "groundMaterials": [
+        "exposed rock",
+        "volcanic soil",
+        "ash"
+      ]
+    },
+    {
+      "id": "region-1",
+      "label": "northwestern volcanic ridge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "ridge",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.426,
+          "z": 0.2744
+        },
+        {
+          "x": 0.3737,
+          "z": 0.3324
+        },
+        {
+          "x": 0.2862,
+          "z": 0.351
+        },
+        {
+          "x": 0.1929,
+          "z": 0.3428
+        },
+        {
+          "x": 0.1503,
+          "z": 0.2804
+        },
+        {
+          "x": 0.1272,
+          "z": 0.2124
+        },
+        {
+          "x": 0.1917,
+          "z": 0.161
+        },
+        {
+          "x": 0.2732,
+          "z": 0.1301
+        },
+        {
+          "x": 0.3627,
+          "z": 0.1502
+        },
+        {
+          "x": 0.4141,
+          "z": 0.2063
+        }
+      ],
+      "relativeElevation": 0.388,
+      "roughness": 0.84,
+      "vegetationDensity": 0.03,
+      "groundMaterials": [
+        "exposed rock",
+        "volcanic soil"
+      ]
+    },
+    {
+      "id": "region-2",
+      "label": "northeastern ash plain",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "plain",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.8471,
+          "z": 0.3103
+        },
+        {
+          "x": 0.7857,
+          "z": 0.3564
+        },
+        {
+          "x": 0.7034,
+          "z": 0.3655
+        },
+        {
+          "x": 0.6216,
+          "z": 0.345
+        },
+        {
+          "x": 0.5951,
+          "z": 0.2824
+        },
+        {
+          "x": 0.5881,
+          "z": 0.216
+        },
+        {
+          "x": 0.658,
+          "z": 0.1769
+        },
+        {
+          "x": 0.7377,
+          "z": 0.156
+        },
+        {
+          "x": 0.8131,
+          "z": 0.1875
+        },
+        {
+          "x": 0.8504,
+          "z": 0.2448
+        }
+      ],
+      "relativeElevation": 0.054,
+      "roughness": 0.46,
+      "vegetationDensity": 0.04,
+      "groundMaterials": [
+        "ash",
+        "dry soil"
+      ]
+    },
+    {
+      "id": "region-3",
+      "label": "central broken upland",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "hill",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.6109,
+          "z": 0.5701
+        },
+        {
+          "x": 0.5418,
+          "z": 0.61
+        },
+        {
+          "x": 0.4626,
+          "z": 0.6105
+        },
+        {
+          "x": 0.3912,
+          "z": 0.5742
+        },
+        {
+          "x": 0.378,
+          "z": 0.502
+        },
+        {
+          "x": 0.3857,
+          "z": 0.4277
+        },
+        {
+          "x": 0.46,
+          "z": 0.3955
+        },
+        {
+          "x": 0.5395,
+          "z": 0.3824
+        },
+        {
+          "x": 0.6022,
+          "z": 0.4301
+        },
+        {
+          "x": 0.628,
+          "z": 0.4978
+        }
+      ],
+      "relativeElevation": 0.218,
+      "roughness": 0.72,
+      "vegetationDensity": 0.02,
+      "groundMaterials": [
+        "exposed rock",
+        "gravel"
+      ]
+    },
+    {
+      "id": "region-4",
+      "label": "southwestern ravine basin",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "valley",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.4065,
+          "z": 0.8384
+        },
+        {
+          "x": 0.3227,
+          "z": 0.8637
+        },
+        {
+          "x": 0.2365,
+          "z": 0.8551
+        },
+        {
+          "x": 0.1688,
+          "z": 0.8092
+        },
+        {
+          "x": 0.1674,
+          "z": 0.7402
+        },
+        {
+          "x": 0.1918,
+          "z": 0.6721
+        },
+        {
+          "x": 0.2786,
+          "z": 0.6534
+        },
+        {
+          "x": 0.3675,
+          "z": 0.6513
+        },
+        {
+          "x": 0.4235,
+          "z": 0.7062
+        },
+        {
+          "x": 0.4406,
+          "z": 0.7729
+        }
+      ],
+      "relativeElevation": -0.177,
+      "roughness": 0.47,
+      "vegetationDensity": 0.06,
+      "groundMaterials": [
+        "gravel",
+        "dry soil"
+      ]
+    },
+    {
+      "id": "region-5",
+      "label": "southeastern escarpment",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "cliff",
+      "biome": "Volcanic badlands and corrupted highlands",
+      "boundary": [
+        {
+          "x": 0.7949,
+          "z": 0.8117
+        },
+        {
+          "x": 0.6985,
+          "z": 0.8255
+        },
+        {
+          "x": 0.6071,
+          "z": 0.805
+        },
+        {
+          "x": 0.5481,
+          "z": 0.7401
+        },
+        {
+          "x": 0.5601,
+          "z": 0.6607
+        },
+        {
+          "x": 0.6035,
+          "z": 0.5868
+        },
+        {
+          "x": 0.7007,
+          "z": 0.5786
+        },
+        {
+          "x": 0.7971,
+          "z": 0.5888
+        },
+        {
+          "x": 0.8419,
+          "z": 0.6619
+        },
+        {
+          "x": 0.8479,
+          "z": 0.7412
+        }
+      ],
+      "relativeElevation": 0.435,
+      "roughness": 0.88,
+      "vegetationDensity": 0.01,
+      "groundMaterials": [
+        "exposed rock",
+        "volcanic soil"
+      ]
+    }
+  ],
+  "materials": []
+}

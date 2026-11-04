@@ -47,9 +47,9 @@ function setStudyStatus(choice: MapChoice): void {
   selectedStudy = choice.study;
   const count = studyObservationCount(selectedStudy);
   elements.status.textContent =
-    `${selectedStudy.terrain.length} terrain zones · ` +
-    `${selectedStudy.landmarks.length} location footprints · ` +
-    `${count} total records`;
+    `${selectedStudy.terrain.length} estimated terrain regions · ` +
+    `${selectedStudy.landmarks.length} generic footprints · ` +
+    `${count} low-confidence estimates`;
 }
 
 function biomeForStudy(study: MapStudy): BiomeId {

@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "editionId": "wrath-of-the-lich-king",
+  "editionTitle": "World of Warcraft: Wrath of the Lich King",
+  "mapId": "northrend/utgarde-keep-howling-fjord",
+  "mapName": "Utgarde Keep, Howling Fjord",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft",
+  "observedAt": "2026-11-04T15:40:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 ADT grid frame (31,221.333 m per side). This shared coordinate frame is not the measured scene extent or playable-zone size. Boundary, subregion positions, generic feature anchors, and physical footprints in this pilot are low-confidence estimates."
+  },
+  "mapBoundary": [
+    {
+      "x": 0.7975,
+      "z": 0.5408
+    },
+    {
+      "x": 0.7662,
+      "z": 0.7463
+    },
+    {
+      "x": 0.6373,
+      "z": 0.8934
+    },
+    {
+      "x": 0.4656,
+      "z": 0.9018
+    },
+    {
+      "x": 0.3274,
+      "z": 0.7985
+    },
+    {
+      "x": 0.2076,
+      "z": 0.6632
+    },
+    {
+      "x": 0.1687,
+      "z": 0.4546
+    },
+    {
+      "x": 0.2558,
+      "z": 0.274
+    },
+    {
+      "x": 0.3957,
+      "z": 0.201
+    },
+    {
+      "x": 0.5315,
+      "z": 0.1324
+    },
+    {
+      "x": 0.6967,
+      "z": 0.1599
+    },
+    {
+      "x": 0.7986,
+      "z": 0.3333
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft",
+      "description": "Noclip World of Warcraft scene catalog; the catalog label identifies the reference scene (Utgarde Keep, Howling Fjord) only. No game geometry, textures, or assets were extracted."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/Howling_Fjord",
+      "description": "Howling Fjord article used for zone naming and broad environmental context. This concept study does not claim that its polygons or measurements were traced from the article."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Used only to document the nominal 64x64 map-grid frame; not treated as playable-zone dimensions."
+    }
+  ],
+  "summary": "Low-confidence concept study for testing map-driven generation across varied zones. The irregular boundary, one zone-wide baseline and five terrain-region polygons, generic feature footprints, and spacing values are estimates, not surveyed measurements or observations extracted from Noclip. Replace them with source-supported observations before treating this as a reference map.",
+  "landmarks": [
+    {
+      "id": "generic-footprint-1",
+      "label": "Named scene-anchor footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 15610.67,
+      "zMeters": 14986.24,
+      "kind": "structure",
+      "elevationMeters": -35,
+      "widthMeters": 990,
+      "depthMeters": 740,
+      "heightMeters": 127,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-2",
+      "label": "Secondary settlement or route footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 9366.4,
+      "zMeters": 21230.51,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 550,
+      "depthMeters": 440,
+      "heightMeters": 57,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-3",
+      "label": "Prominent terrain massing footprint (generic landform)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 22479.36,
+      "zMeters": 9678.61,
+      "kind": "rock",
+      "elevationMeters": 35,
+      "widthMeters": 1570,
+      "depthMeters": 1020,
+      "heightMeters": 182,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "generic-footprint-1",
+      "toId": "generic-footprint-2",
+      "distanceMeters": 8830.73,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    },
+    {
+      "fromId": "generic-footprint-2",
+      "toId": "generic-footprint-3",
+      "distanceMeters": 17475.59,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "regional-ground-cover",
+      "label": "Zone-wide ground-cover baseline",
+      "confidence": "low",
+      "notes": "Broad zone-level biome field used as the study-based baseline; not a measured soil classification or a traced material boundary.",
+      "terrainType": "plain",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.7975,
+          "z": 0.5408
+        },
+        {
+          "x": 0.7662,
+          "z": 0.7463
+        },
+        {
+          "x": 0.6373,
+          "z": 0.8934
+        },
+        {
+          "x": 0.4656,
+          "z": 0.9018
+        },
+        {
+          "x": 0.3274,
+          "z": 0.7985
+        },
+        {
+          "x": 0.2076,
+          "z": 0.6632
+        },
+        {
+          "x": 0.1687,
+          "z": 0.4546
+        },
+        {
+          "x": 0.2558,
+          "z": 0.274
+        },
+        {
+          "x": 0.3957,
+          "z": 0.201
+        },
+        {
+          "x": 0.5315,
+          "z": 0.1324
+        },
+        {
+          "x": 0.6967,
+          "z": 0.1599
+        },
+        {
+          "x": 0.7986,
+          "z": 0.3333
+        }
+      ],
+      "relativeElevation": 0,
+      "roughness": 0.1,
+      "vegetationDensity": 0.6,
+      "groundMaterials": [
+        "exposed rock",
+        "forest soil",
+        "grass"
+      ]
+    },
+    {
+      "id": "region-1",
+      "label": "northwestern fjord cliff",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "cliff",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.4536,
+          "z": 0.2801
+        },
+        {
+          "x": 0.4288,
+          "z": 0.3477
+        },
+        {
+          "x": 0.3483,
+          "z": 0.3805
+        },
+        {
+          "x": 0.2557,
+          "z": 0.3934
+        },
+        {
+          "x": 0.1927,
+          "z": 0.3411
+        },
+        {
+          "x": 0.1476,
+          "z": 0.2801
+        },
+        {
+          "x": 0.1884,
+          "z": 0.2167
+        },
+        {
+          "x": 0.2587,
+          "z": 0.1736
+        },
+        {
+          "x": 0.352,
+          "z": 0.1711
+        },
+        {
+          "x": 0.4189,
+          "z": 0.2179
+        }
+      ],
+      "relativeElevation": 0.394,
+      "roughness": 0.85,
+      "vegetationDensity": 0.39,
+      "groundMaterials": [
+        "exposed rock",
+        "forest soil"
+      ]
+    },
+    {
+      "id": "region-2",
+      "label": "northeastern conifer ridge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "ridge",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.8309,
+          "z": 0.3181
+        },
+        {
+          "x": 0.7919,
+          "z": 0.3769
+        },
+        {
+          "x": 0.7136,
+          "z": 0.3995
+        },
+        {
+          "x": 0.6273,
+          "z": 0.3993
+        },
+        {
+          "x": 0.5811,
+          "z": 0.3434
+        },
+        {
+          "x": 0.552,
+          "z": 0.2811
+        },
+        {
+          "x": 0.6038,
+          "z": 0.2278
+        },
+        {
+          "x": 0.675,
+          "z": 0.1941
+        },
+        {
+          "x": 0.7594,
+          "z": 0.2053
+        },
+        {
+          "x": 0.8119,
+          "z": 0.2554
+        }
+      ],
+      "relativeElevation": 0.286,
+      "roughness": 0.71,
+      "vegetationDensity": 0.72,
+      "groundMaterials": [
+        "exposed rock",
+        "forest soil"
+      ]
+    },
+    {
+      "id": "region-3",
+      "label": "central fjord terrace",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "plain",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.6257,
+          "z": 0.5401
+        },
+        {
+          "x": 0.5743,
+          "z": 0.5977
+        },
+        {
+          "x": 0.4968,
+          "z": 0.6135
+        },
+        {
+          "x": 0.4162,
+          "z": 0.5989
+        },
+        {
+          "x": 0.3839,
+          "z": 0.5311
+        },
+        {
+          "x": 0.3691,
+          "z": 0.458
+        },
+        {
+          "x": 0.4301,
+          "z": 0.4079
+        },
+        {
+          "x": 0.5035,
+          "z": 0.379
+        },
+        {
+          "x": 0.5795,
+          "z": 0.4061
+        },
+        {
+          "x": 0.6208,
+          "z": 0.4676
+        }
+      ],
+      "relativeElevation": 0.034,
+      "roughness": 0.3,
+      "vegetationDensity": 0.62,
+      "groundMaterials": [
+        "grass",
+        "forest soil"
+      ]
+    },
+    {
+      "id": "region-4",
+      "label": "southwestern inlet valley",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "valley",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.4537,
+          "z": 0.7764
+        },
+        {
+          "x": 0.3845,
+          "z": 0.8209
+        },
+        {
+          "x": 0.298,
+          "z": 0.8267
+        },
+        {
+          "x": 0.2151,
+          "z": 0.7997
+        },
+        {
+          "x": 0.1929,
+          "z": 0.7323
+        },
+        {
+          "x": 0.1919,
+          "z": 0.6618
+        },
+        {
+          "x": 0.2688,
+          "z": 0.6247
+        },
+        {
+          "x": 0.3538,
+          "z": 0.6065
+        },
+        {
+          "x": 0.4288,
+          "z": 0.6449
+        },
+        {
+          "x": 0.4635,
+          "z": 0.7071
+        }
+      ],
+      "relativeElevation": -0.156,
+      "roughness": 0.36,
+      "vegetationDensity": 0.78,
+      "groundMaterials": [
+        "water",
+        "wet soil"
+      ]
+    },
+    {
+      "id": "region-5",
+      "label": "southeastern coastal shelf",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "coast",
+      "biome": "Cold temperate fjords and coniferous highlands",
+      "boundary": [
+        {
+          "x": 0.8256,
+          "z": 0.7854
+        },
+        {
+          "x": 0.7394,
+          "z": 0.8236
+        },
+        {
+          "x": 0.6451,
+          "z": 0.8197
+        },
+        {
+          "x": 0.5644,
+          "z": 0.7738
+        },
+        {
+          "x": 0.5546,
+          "z": 0.6936
+        },
+        {
+          "x": 0.5709,
+          "z": 0.6123
+        },
+        {
+          "x": 0.6622,
+          "z": 0.5823
+        },
+        {
+          "x": 0.7579,
+          "z": 0.5726
+        },
+        {
+          "x": 0.8272,
+          "z": 0.6303
+        },
+        {
+          "x": 0.853,
+          "z": 0.7065
+        }
+      ],
+      "relativeElevation": -0.054,
+      "roughness": 0.24,
+      "vegetationDensity": 0.49,
+      "groundMaterials": [
+        "sand",
+        "wet soil"
+      ]
+    }
+  ],
+  "materials": []
+}

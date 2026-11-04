@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "editionId": "wrath-of-the-lich-king",
+  "editionTitle": "World of Warcraft: Wrath of the Lich King",
+  "mapId": "northrend/terrace-of-the-makers-the-storm-peaks",
+  "mapName": "Terrace of the Makers, The Storm Peaks",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft",
+  "observedAt": "2026-11-04T15:40:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 ADT grid frame (31,221.333 m per side). This shared coordinate frame is not the measured scene extent or playable-zone size. Boundary, subregion positions, generic feature anchors, and physical footprints in this pilot are low-confidence estimates."
+  },
+  "mapBoundary": [
+    {
+      "x": 0.8086,
+      "z": 0.521
+    },
+    {
+      "x": 0.8255,
+      "z": 0.6883
+    },
+    {
+      "x": 0.6436,
+      "z": 0.7537
+    },
+    {
+      "x": 0.4652,
+      "z": 0.8588
+    },
+    {
+      "x": 0.3216,
+      "z": 0.7162
+    },
+    {
+      "x": 0.127,
+      "z": 0.648
+    },
+    {
+      "x": 0.1528,
+      "z": 0.4764
+    },
+    {
+      "x": 0.1568,
+      "z": 0.3015
+    },
+    {
+      "x": 0.3637,
+      "z": 0.2593
+    },
+    {
+      "x": 0.5341,
+      "z": 0.1484
+    },
+    {
+      "x": 0.7029,
+      "z": 0.2542
+    },
+    {
+      "x": 0.8575,
+      "z": 0.3582
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft",
+      "description": "Noclip World of Warcraft scene catalog; the catalog label identifies the reference scene (Terrace of the Makers, The Storm Peaks) only. No game geometry, textures, or assets were extracted."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/The_Storm_Peaks",
+      "description": "The Storm Peaks article used for zone naming and broad environmental context. This concept study does not claim that its polygons or measurements were traced from the article."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Used only to document the nominal 64x64 map-grid frame; not treated as playable-zone dimensions."
+    }
+  ],
+  "summary": "Low-confidence concept study for testing map-driven generation across varied zones. The irregular boundary, one zone-wide baseline and five terrain-region polygons, generic feature footprints, and spacing values are estimates, not surveyed measurements or observations extracted from Noclip. Replace them with source-supported observations before treating this as a reference map.",
+  "landmarks": [
+    {
+      "id": "generic-footprint-1",
+      "label": "Named scene-anchor footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 15610.67,
+      "zMeters": 15610.67,
+      "kind": "structure",
+      "elevationMeters": -35,
+      "widthMeters": 990,
+      "depthMeters": 480,
+      "heightMeters": 109,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-2",
+      "label": "Secondary settlement or route footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 9366.4,
+      "zMeters": 21230.51,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 550,
+      "depthMeters": 280,
+      "heightMeters": 57,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-3",
+      "label": "Prominent terrain massing footprint (generic landform)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 22479.36,
+      "zMeters": 9678.61,
+      "kind": "rock",
+      "elevationMeters": 35,
+      "widthMeters": 1390,
+      "depthMeters": 1020,
+      "heightMeters": 110,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "generic-footprint-1",
+      "toId": "generic-footprint-2",
+      "distanceMeters": 8400.8,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    },
+    {
+      "fromId": "generic-footprint-2",
+      "toId": "generic-footprint-3",
+      "distanceMeters": 17475.59,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "regional-ground-cover",
+      "label": "Zone-wide ground-cover baseline",
+      "confidence": "low",
+      "notes": "Broad zone-level biome field used as the study-based baseline; not a measured soil classification or a traced material boundary.",
+      "terrainType": "plain",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.8086,
+          "z": 0.521
+        },
+        {
+          "x": 0.8255,
+          "z": 0.6883
+        },
+        {
+          "x": 0.6436,
+          "z": 0.7537
+        },
+        {
+          "x": 0.4652,
+          "z": 0.8588
+        },
+        {
+          "x": 0.3216,
+          "z": 0.7162
+        },
+        {
+          "x": 0.127,
+          "z": 0.648
+        },
+        {
+          "x": 0.1528,
+          "z": 0.4764
+        },
+        {
+          "x": 0.1568,
+          "z": 0.3015
+        },
+        {
+          "x": 0.3637,
+          "z": 0.2593
+        },
+        {
+          "x": 0.5341,
+          "z": 0.1484
+        },
+        {
+          "x": 0.7029,
+          "z": 0.2542
+        },
+        {
+          "x": 0.8575,
+          "z": 0.3582
+        }
+      ],
+      "relativeElevation": 0,
+      "roughness": 0.1,
+      "vegetationDensity": 0.07,
+      "groundMaterials": [
+        "snow",
+        "exposed rock",
+        "ice"
+      ]
+    },
+    {
+      "id": "region-1",
+      "label": "northwestern glacial summit ridge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "ridge",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.3979,
+          "z": 0.3563
+        },
+        {
+          "x": 0.3375,
+          "z": 0.4098
+        },
+        {
+          "x": 0.2486,
+          "z": 0.4236
+        },
+        {
+          "x": 0.1569,
+          "z": 0.4082
+        },
+        {
+          "x": 0.1216,
+          "z": 0.3436
+        },
+        {
+          "x": 0.1094,
+          "z": 0.2741
+        },
+        {
+          "x": 0.1776,
+          "z": 0.2277
+        },
+        {
+          "x": 0.2622,
+          "z": 0.2015
+        },
+        {
+          "x": 0.3482,
+          "z": 0.2287
+        },
+        {
+          "x": 0.394,
+          "z": 0.2874
+        }
+      ],
+      "relativeElevation": 0.524,
+      "roughness": 0.93,
+      "vegetationDensity": 0.03,
+      "groundMaterials": [
+        "snow",
+        "exposed rock"
+      ]
+    },
+    {
+      "id": "region-2",
+      "label": "northeastern sheer escarpment",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "cliff",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.8669,
+          "z": 0.3912
+        },
+        {
+          "x": 0.7994,
+          "z": 0.432
+        },
+        {
+          "x": 0.7165,
+          "z": 0.4365
+        },
+        {
+          "x": 0.638,
+          "z": 0.4096
+        },
+        {
+          "x": 0.6183,
+          "z": 0.3457
+        },
+        {
+          "x": 0.6192,
+          "z": 0.2791
+        },
+        {
+          "x": 0.6936,
+          "z": 0.2453
+        },
+        {
+          "x": 0.7754,
+          "z": 0.2292
+        },
+        {
+          "x": 0.846,
+          "z": 0.2667
+        },
+        {
+          "x": 0.878,
+          "z": 0.3259
+        }
+      ],
+      "relativeElevation": 0.422,
+      "roughness": 0.89,
+      "vegetationDensity": 0.02,
+      "groundMaterials": [
+        "exposed rock",
+        "ice"
+      ]
+    },
+    {
+      "id": "region-3",
+      "label": "central alpine shelf",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "hill",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.6039,
+          "z": 0.5792
+        },
+        {
+          "x": 0.5305,
+          "z": 0.6122
+        },
+        {
+          "x": 0.4515,
+          "z": 0.6076
+        },
+        {
+          "x": 0.3847,
+          "z": 0.5647
+        },
+        {
+          "x": 0.3779,
+          "z": 0.4919
+        },
+        {
+          "x": 0.3933,
+          "z": 0.4187
+        },
+        {
+          "x": 0.4706,
+          "z": 0.393
+        },
+        {
+          "x": 0.5512,
+          "z": 0.3855
+        },
+        {
+          "x": 0.608,
+          "z": 0.439
+        },
+        {
+          "x": 0.6285,
+          "z": 0.5082
+        }
+      ],
+      "relativeElevation": 0.204,
+      "roughness": 0.66,
+      "vegetationDensity": 0.08,
+      "groundMaterials": [
+        "snow",
+        "gravel"
+      ]
+    },
+    {
+      "id": "region-4",
+      "label": "southwestern glacial valley",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "valley",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.372,
+          "z": 0.774
+        },
+        {
+          "x": 0.2852,
+          "z": 0.7922
+        },
+        {
+          "x": 0.2,
+          "z": 0.7789
+        },
+        {
+          "x": 0.139,
+          "z": 0.7275
+        },
+        {
+          "x": 0.1443,
+          "z": 0.6589
+        },
+        {
+          "x": 0.177,
+          "z": 0.593
+        },
+        {
+          "x": 0.2656,
+          "z": 0.5805
+        },
+        {
+          "x": 0.3546,
+          "z": 0.5841
+        },
+        {
+          "x": 0.403,
+          "z": 0.6434
+        },
+        {
+          "x": 0.414,
+          "z": 0.7109
+        }
+      ],
+      "relativeElevation": -0.17,
+      "roughness": 0.44,
+      "vegetationDensity": 0.16,
+      "groundMaterials": [
+        "ice",
+        "snow"
+      ]
+    },
+    {
+      "id": "region-5",
+      "label": "southeastern snowfield basin",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "lake",
+      "biome": "Alpine tundra with steep ridges and glacial valleys",
+      "boundary": [
+        {
+          "x": 0.7828,
+          "z": 0.8187
+        },
+        {
+          "x": 0.6851,
+          "z": 0.8242
+        },
+        {
+          "x": 0.5956,
+          "z": 0.7982
+        },
+        {
+          "x": 0.5452,
+          "z": 0.7282
+        },
+        {
+          "x": 0.5642,
+          "z": 0.65
+        },
+        {
+          "x": 0.6161,
+          "z": 0.5802
+        },
+        {
+          "x": 0.7136,
+          "z": 0.5792
+        },
+        {
+          "x": 0.8089,
+          "z": 0.5963
+        },
+        {
+          "x": 0.8446,
+          "z": 0.6729
+        },
+        {
+          "x": 0.8437,
+          "z": 0.7525
+        }
+      ],
+      "relativeElevation": -0.082,
+      "roughness": 0.17,
+      "vegetationDensity": 0.04,
+      "groundMaterials": [
+        "ice",
+        "snow"
+      ]
+    }
+  ],
+  "materials": []
+}

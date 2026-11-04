@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   isMapPointInsideRegion,
   isMapStudy,
@@ -7,6 +9,60 @@ import {
   migrateMapStudy,
   saveMapStudy,
 } from "../src/map-study.ts";
+
+async function findStudyFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const nested = await Promise.all(
+    entries.map(async (entry) => {
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) return findStudyFiles(path);
+      return entry.name === "study.json" ? [path] : [];
+    }),
+  );
+  return nested.flat();
+}
+
+const studyPaths = await findStudyFiles(
+  fileURLToPath(new URL("../data/references/world-of-warcraft/", import.meta.url)),
+);
+assert.equal(studyPaths.length, 20, "The committed corpus must contain 20 map studies.");
+const corpusStudies = await Promise.all(
+  studyPaths.map(async (path) => JSON.parse(await readFile(path, "utf8"))),
+);
+assert.ok(corpusStudies.every(isMapStudy), "Every committed study must match the schema.");
+assert.equal(
+  new Set(corpusStudies.map(({ editionId, mapId }) => `${editionId}:${mapId}`)).size,
+  20,
+  "Each study must identify a distinct catalog map.",
+);
+assert.ok(
+  corpusStudies.every(
+    (study) =>
+      study.calibration !== null &&
+      study.mapBoundary?.length >= 3 &&
+      study.terrain.length >= 4 &&
+      study.landmarks.length >= 3 &&
+      study.landmarkDistances?.length >= 2 &&
+      study.sources?.length >= 2 &&
+      /low[- ]confidence/i.test(study.summary ?? ""),
+  ),
+  "Each map study must include a calibrated frame, boundary, terrain regions, generic footprints, spacing, and provenance.",
+);
+for (const study of corpusStudies) {
+  for (const distance of study.landmarkDistances) {
+    const start = study.landmarks.find(({ id }) => id === distance.fromId);
+    const end = study.landmarks.find(({ id }) => id === distance.toId);
+    assert.ok(start && end, `${study.mapName} spacing references must exist.`);
+    const expectedDistance = Math.hypot(
+      end.xMeters - start.xMeters,
+      end.zMeters - start.zMeters,
+    );
+    assert.ok(
+      Math.abs(distance.distanceMeters - expectedDistance) < 2,
+      `${study.mapName} spacing must match its estimated anchors.`,
+    );
+  }
+}
 
 const mapStudy = {
   schemaVersion: 2,

@@ -6,9 +6,12 @@ builder automatically. Browser-local observations override the bundled copy
 for that browser; export them from **Map study** and replace the committed JSON
 to publish them. Browser storage does not sync to GitHub Pages.
 
-Do not add map-wide boundaries, physical dimensions, or placements unless the
-reference view supports them. Record confidence and evidence limits in each
-observation; maps without a trustworthy study remain uncollected.
+The current 20-study pilot corpus includes low-confidence concept estimates so
+the data-driven generator can be exercised across varied zones. These outlines,
+terrain regions, generic footprints, and spacing estimates are not surveyed or
+extracted from Noclip. Keep that caveat in each study, and do not treat nominal
+map-grid extents as playable-zone dimensions. Replace estimates with
+map-supported observations as stronger references are reviewed.
 
 Schema version 2 records:
 
@@ -22,9 +25,9 @@ Schema version 2 records:
 Meter-based landmark and material observations use a northwest origin, +X
 east/right, +Z south/down, and elevation upward. Polygon vertices use a
 per-map 0-to-1 coordinate range; relative elevation ranges from -1 to 1 across
-the generator's configured relief, not meters. Any nominal coordinate-grid
-extent must not be presented as the exact playable-zone size. Use confidence
-and notes to distinguish map-derived estimates from measured values.
+the generator's configured relief, not meters. Any nominal coordinate-grid extent must not be presented as the exact playable
+zone size. Use confidence and notes to distinguish map-derived estimates from
+measured values.
 
 Separate map studies remain independent. Their normalized boundaries preserve
 the map shape for future overhead layouts, but no inter-map placement or

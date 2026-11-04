@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "editionId": "classic",
+  "editionTitle": "World of Warcraft",
+  "mapId": "eastern-kingdoms/stormwind-elwynn-forest",
+  "mapName": "Stormwind, Elwynn Forest",
+  "sourceUrl": "https://noclip.website/#WorldOfWarcraft",
+  "observedAt": "2026-11-04T15:40:00.000Z",
+  "coordinateSystem": {
+    "units": "meters",
+    "xAxis": "east",
+    "zAxis": "south",
+    "terrainRegions": "normalized-map-relative"
+  },
+  "calibration": {
+    "widthMeters": 31221.333,
+    "depthMeters": 31221.333,
+    "originDescription": "Nominal full WoW 64x64 ADT grid frame (31,221.333 m per side). This shared coordinate frame is not the measured scene extent or playable-zone size. Boundary, subregion positions, generic feature anchors, and physical footprints in this pilot are low-confidence estimates."
+  },
+  "mapBoundary": [
+    {
+      "x": 0.8526,
+      "z": 0.5
+    },
+    {
+      "x": 0.85,
+      "z": 0.6598
+    },
+    {
+      "x": 0.715,
+      "z": 0.7944
+    },
+    {
+      "x": 0.5,
+      "z": 0.8264
+    },
+    {
+      "x": 0.3044,
+      "z": 0.7679
+    },
+    {
+      "x": 0.1351,
+      "z": 0.6666
+    },
+    {
+      "x": 0.07,
+      "z": 0.5
+    },
+    {
+      "x": 0.1574,
+      "z": 0.3436
+    },
+    {
+      "x": 0.3108,
+      "z": 0.2409
+    },
+    {
+      "x": 0.5,
+      "z": 0.1804
+    },
+    {
+      "x": 0.7064,
+      "z": 0.2173
+    },
+    {
+      "x": 0.8203,
+      "z": 0.3538
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://noclip.website/#WorldOfWarcraft",
+      "description": "Noclip World of Warcraft scene catalog; the catalog label identifies the reference scene (Stormwind, Elwynn Forest) only. No game geometry, textures, or assets were extracted."
+    },
+    {
+      "url": "https://warcraft.wiki.gg/wiki/Elwynn_Forest_(Classic)",
+      "description": "Elwynn Forest (Classic) article used for zone naming and broad environmental context. This concept study does not claim that its polygons or measurements were traced from the article."
+    },
+    {
+      "url": "https://wowdev.wiki/ADT/v18",
+      "description": "Used only to document the nominal 64x64 map-grid frame; not treated as playable-zone dimensions."
+    }
+  ],
+  "summary": "Low-confidence concept study for testing map-driven generation across varied zones. The irregular boundary, one zone-wide baseline and five terrain-region polygons, generic feature footprints, and spacing values are estimates, not surveyed measurements or observations extracted from Noclip. Replace them with source-supported observations before treating this as a reference map.",
+  "landmarks": [
+    {
+      "id": "generic-footprint-1",
+      "label": "Named scene-anchor footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 15610.67,
+      "zMeters": 14986.24,
+      "kind": "structure",
+      "elevationMeters": -35,
+      "widthMeters": 650,
+      "depthMeters": 480,
+      "heightMeters": 55,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-2",
+      "label": "Secondary settlement or route footprint (generic massing)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 9366.4,
+      "zMeters": 21854.93,
+      "kind": "structure",
+      "elevationMeters": 0,
+      "widthMeters": 360,
+      "depthMeters": 280,
+      "heightMeters": 35,
+      "rotationDegrees": 0
+    },
+    {
+      "id": "generic-footprint-3",
+      "label": "Prominent terrain massing footprint (generic landform)",
+      "confidence": "low",
+      "notes": "Approximate zone-relative anchor used for a generic blockout only; footprint and height are illustrative estimates, not measured object dimensions.",
+      "xMeters": 22791.57,
+      "zMeters": 9366.4,
+      "kind": "rock",
+      "elevationMeters": 35,
+      "widthMeters": 850,
+      "depthMeters": 720,
+      "heightMeters": 110,
+      "rotationDegrees": 0
+    }
+  ],
+  "landmarkDistances": [
+    {
+      "fromId": "generic-footprint-1",
+      "toId": "generic-footprint-2",
+      "distanceMeters": 9282.77,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    },
+    {
+      "fromId": "generic-footprint-2",
+      "toId": "generic-footprint-3",
+      "distanceMeters": 18335.72,
+      "confidence": "low",
+      "notes": "Straight-line estimate derived only from the approximate normalized anchors in this study; not a surveyed or travel distance."
+    }
+  ],
+  "terrain": [
+    {
+      "id": "regional-ground-cover",
+      "label": "Zone-wide ground-cover baseline",
+      "confidence": "low",
+      "notes": "Broad zone-level biome field used as the study-based baseline; not a measured soil classification or a traced material boundary.",
+      "terrainType": "plain",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.8526,
+          "z": 0.5
+        },
+        {
+          "x": 0.85,
+          "z": 0.6598
+        },
+        {
+          "x": 0.715,
+          "z": 0.7944
+        },
+        {
+          "x": 0.5,
+          "z": 0.8264
+        },
+        {
+          "x": 0.3044,
+          "z": 0.7679
+        },
+        {
+          "x": 0.1351,
+          "z": 0.6666
+        },
+        {
+          "x": 0.07,
+          "z": 0.5
+        },
+        {
+          "x": 0.1574,
+          "z": 0.3436
+        },
+        {
+          "x": 0.3108,
+          "z": 0.2409
+        },
+        {
+          "x": 0.5,
+          "z": 0.1804
+        },
+        {
+          "x": 0.7064,
+          "z": 0.2173
+        },
+        {
+          "x": 0.8203,
+          "z": 0.3538
+        }
+      ],
+      "relativeElevation": 0,
+      "roughness": 0.1,
+      "vegetationDensity": 0.71,
+      "groundMaterials": [
+        "exposed rock",
+        "forest soil",
+        "loam"
+      ]
+    },
+    {
+      "id": "region-1",
+      "label": "northwestern wooded ridge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "ridge",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.4043,
+          "z": 0.2441
+        },
+        {
+          "x": 0.3795,
+          "z": 0.3117
+        },
+        {
+          "x": 0.299,
+          "z": 0.3445
+        },
+        {
+          "x": 0.2064,
+          "z": 0.3574
+        },
+        {
+          "x": 0.1434,
+          "z": 0.3051
+        },
+        {
+          "x": 0.1098,
+          "z": 0.2441
+        },
+        {
+          "x": 0.1391,
+          "z": 0.1807
+        },
+        {
+          "x": 0.2094,
+          "z": 0.1376
+        },
+        {
+          "x": 0.3027,
+          "z": 0.1351
+        },
+        {
+          "x": 0.3696,
+          "z": 0.1819
+        }
+      ],
+      "relativeElevation": 0.286,
+      "roughness": 0.72,
+      "vegetationDensity": 0.74,
+      "groundMaterials": [
+        "exposed rock",
+        "forest soil"
+      ]
+    },
+    {
+      "id": "region-2",
+      "label": "northeastern forested hills",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "hill",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.8809,
+          "z": 0.2821
+        },
+        {
+          "x": 0.8419,
+          "z": 0.3409
+        },
+        {
+          "x": 0.7636,
+          "z": 0.3635
+        },
+        {
+          "x": 0.6773,
+          "z": 0.3633
+        },
+        {
+          "x": 0.6311,
+          "z": 0.3074
+        },
+        {
+          "x": 0.602,
+          "z": 0.2451
+        },
+        {
+          "x": 0.6538,
+          "z": 0.1918
+        },
+        {
+          "x": 0.725,
+          "z": 0.1581
+        },
+        {
+          "x": 0.8094,
+          "z": 0.1693
+        },
+        {
+          "x": 0.8619,
+          "z": 0.2194
+        }
+      ],
+      "relativeElevation": 0.136,
+      "roughness": 0.55,
+      "vegetationDensity": 0.88,
+      "groundMaterials": [
+        "forest soil",
+        "loam"
+      ]
+    },
+    {
+      "id": "region-3",
+      "label": "central open woodland",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "plain",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.6257,
+          "z": 0.5401
+        },
+        {
+          "x": 0.5743,
+          "z": 0.5977
+        },
+        {
+          "x": 0.4968,
+          "z": 0.6135
+        },
+        {
+          "x": 0.4162,
+          "z": 0.5989
+        },
+        {
+          "x": 0.3839,
+          "z": 0.5311
+        },
+        {
+          "x": 0.3691,
+          "z": 0.458
+        },
+        {
+          "x": 0.4301,
+          "z": 0.4079
+        },
+        {
+          "x": 0.5035,
+          "z": 0.379
+        },
+        {
+          "x": 0.5795,
+          "z": 0.4061
+        },
+        {
+          "x": 0.6208,
+          "z": 0.4676
+        }
+      ],
+      "relativeElevation": 0.014,
+      "roughness": 0.31,
+      "vegetationDensity": 0.52,
+      "groundMaterials": [
+        "grass",
+        "loam"
+      ]
+    },
+    {
+      "id": "region-4",
+      "label": "southwestern stream valley",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "valley",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.4037,
+          "z": 0.8124
+        },
+        {
+          "x": 0.3345,
+          "z": 0.8569
+        },
+        {
+          "x": 0.248,
+          "z": 0.8627
+        },
+        {
+          "x": 0.1651,
+          "z": 0.8357
+        },
+        {
+          "x": 0.1429,
+          "z": 0.7683
+        },
+        {
+          "x": 0.1419,
+          "z": 0.6978
+        },
+        {
+          "x": 0.2188,
+          "z": 0.6607
+        },
+        {
+          "x": 0.3038,
+          "z": 0.6425
+        },
+        {
+          "x": 0.3788,
+          "z": 0.6809
+        },
+        {
+          "x": 0.4135,
+          "z": 0.7431
+        }
+      ],
+      "relativeElevation": -0.122,
+      "roughness": 0.35,
+      "vegetationDensity": 0.82,
+      "groundMaterials": [
+        "wet soil",
+        "loam"
+      ]
+    },
+    {
+      "id": "region-5",
+      "label": "southeastern lowland edge",
+      "confidence": "low",
+      "notes": "Coarse polygon estimate for broad environmental variation; not a surveyed or game-file-derived biome boundary.",
+      "terrainType": "plain",
+      "biome": "Temperate forest and grassland",
+      "boundary": [
+        {
+          "x": 0.8256,
+          "z": 0.7854
+        },
+        {
+          "x": 0.7394,
+          "z": 0.8236
+        },
+        {
+          "x": 0.6451,
+          "z": 0.8197
+        },
+        {
+          "x": 0.5644,
+          "z": 0.7738
+        },
+        {
+          "x": 0.5546,
+          "z": 0.6936
+        },
+        {
+          "x": 0.5709,
+          "z": 0.6123
+        },
+        {
+          "x": 0.6622,
+          "z": 0.5823
+        },
+        {
+          "x": 0.7579,
+          "z": 0.5726
+        },
+        {
+          "x": 0.8272,
+          "z": 0.6303
+        },
+        {
+          "x": 0.853,
+          "z": 0.7065
+        }
+      ],
+      "relativeElevation": -0.027,
+      "roughness": 0.28,
+      "vegetationDensity": 0.61,
+      "groundMaterials": [
+        "grass",
+        "topsoil"
+      ]
+    }
+  ],
+  "materials": []
+}
