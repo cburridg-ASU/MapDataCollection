@@ -550,12 +550,23 @@ export function createMapStudy(
 export function loadMapStudy(
   edition: CatalogEdition,
   map: CatalogMap,
+  bundledStudy?: unknown,
 ): MapStudy {
   const storageKey = `map-study-v2:${edition.id}:${map.id}`;
   const legacyStorageKey = `map-study-v1:${edition.id}:${map.id}`;
   const serialized =
     localStorage.getItem(storageKey) ?? localStorage.getItem(legacyStorageKey);
-  if (!serialized) return createMapStudy(edition, map);
+  if (!serialized) {
+    if (bundledStudy === undefined) return createMapStudy(edition, map);
+    const study = migrateMapStudy(bundledStudy);
+    if (!study) {
+      throw new Error(`Bundled study for "${map.name}" has an unsupported format.`);
+    }
+    if (study.editionId !== edition.id || study.mapId !== map.id) {
+      throw new Error("Bundled study does not match the selected map.");
+    }
+    return structuredClone(study);
+  }
 
   let parsed: unknown;
   try {

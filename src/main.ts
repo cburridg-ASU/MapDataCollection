@@ -17,6 +17,7 @@ import {
   type ObservationConfidence,
   type TerrainRegionObservation,
 } from "./map-study";
+import { getBundledMapStudy } from "./map-study-corpus";
 
 const elements = {
   edition: document.querySelector<HTMLSelectElement>("#edition-select")!,
@@ -168,7 +169,11 @@ function getCurrentStudy(): MapStudy {
   ) {
     return currentStudy;
   }
-  currentStudy = loadMapStudy(edition, map);
+  currentStudy = loadMapStudy(
+    edition,
+    map,
+    getBundledMapStudy(edition.id, map.id),
+  );
   return currentStudy;
 }
 

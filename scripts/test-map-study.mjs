@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import {
   isMapPointInsideRegion,
   isMapStudy,
+  loadMapStudy,
   migrateMapStudy,
+  saveMapStudy,
 } from "../src/map-study.ts";
 
 const mapStudy = {
@@ -125,7 +127,11 @@ const legacyStudy = {
     },
   ],
 };
-delete legacyStudy.coordinateSystem.terrainRegions;
+legacyStudy.coordinateSystem = {
+  units: "meters",
+  xAxis: "east",
+  zAxis: "south",
+};
 
 const migrated = migrateMapStudy(legacyStudy);
 assert.ok(migrated, "Version 1 studies should migrate.");
@@ -155,6 +161,33 @@ const legacyEmpty = {
 assert.ok(
   migrateMapStudy(legacyEmpty),
   "Legacy empty studies without scale should remain loadable.",
+);
+
+const studyStorage = new Map();
+Object.defineProperty(globalThis, "localStorage", {
+  configurable: true,
+  value: {
+    getItem: (key) => studyStorage.get(key) ?? null,
+    setItem: (key, value) => studyStorage.set(key, value),
+    removeItem: (key) => studyStorage.delete(key),
+  },
+});
+const edition = { id: "classic", title: "World of Warcraft" };
+const map = { id: "test/region", name: "Test Region" };
+const bundledStudy = structuredClone(mapStudy);
+const fromBundle = loadMapStudy(edition, map, bundledStudy);
+assert.deepEqual(fromBundle, bundledStudy);
+fromBundle.terrain.length = 0;
+assert.equal(
+  bundledStudy.terrain.length,
+  1,
+  "Loading bundled data must not expose the shared corpus object to mutation.",
+);
+saveMapStudy(fromBundle);
+assert.equal(
+  loadMapStudy(edition, map, bundledStudy).terrain.length,
+  0,
+  "Local observations must override the bundled study.",
 );
 
 console.log("Map-relative terrain region tests passed.");

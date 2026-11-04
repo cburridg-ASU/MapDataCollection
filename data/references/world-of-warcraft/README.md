@@ -1,9 +1,14 @@
 # World of Warcraft references
 
-Keep one study per edition and catalog map ID. Export it from the browser's
-**Map study** dialog, then place the JSON here as
-`<edition-id>/<map-id>/study.json`. Browser storage is local to that browser and
-does not sync to GitHub Pages.
+Keep one study per edition and catalog map ID at
+`<edition-id>/<map-id>/study.json`. Studies in this folder are loaded by the
+builder automatically. Browser-local observations override the bundled copy
+for that browser; export them from **Map study** and replace the committed JSON
+to publish them. Browser storage does not sync to GitHub Pages.
+
+Do not add map-wide boundaries, physical dimensions, or placements unless the
+reference view supports them. Record confidence and evidence limits in each
+observation; maps without a trustworthy study remain uncollected.
 
 Schema version 2 records:
 

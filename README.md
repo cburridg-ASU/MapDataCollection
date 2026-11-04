@@ -25,8 +25,10 @@ their elevation is relative to the generator's relief range, not a meter value.
 This works without knowing the map's real-world dimensions. Enter physical
 width and depth only when a trustworthy scale reference is available;
 meter-based landmark and material notes require that calibration. Use
-**Export map study JSON** to back up observations; data is autosaved in the
-current browser only.
+**Export map study JSON** to back up browser-local observations. Committed
+studies in `data/references/world-of-warcraft/` load automatically for the
+selected map; local edits override them only in that browser. Maps without
+committed or local observations remain uncollected and use procedural defaults.
 
 The generator uses measured bounds when available, polygon regions for terrain
 shape and original biome palettes, material descriptions for approximate
@@ -34,8 +36,9 @@ original colors, and calibrated landmark dimensions/positions for simple 3D
 blockouts. Unobserved areas still use procedural terrain, vegetation, and
 structures. Map-relative polygons retain their shape when no physical scale is
 known, and provide a basis for future map-to-map layout and overhead viewing;
-they do not yet define how separate maps connect. This is a manual
-transcription aid, not an automatic extractor or a faithful reconstruction.
+they do not yet define how separate maps connect. This is a transcription aid, not an automatic extractor or a faithful
+reconstruction. The current repository does not yet include a collected
+map-study corpus; catalog entries alone are not geographic data.
 Texture files are not copied or uploaded; material observations are text
 descriptions and approximate color swatches only.
 
