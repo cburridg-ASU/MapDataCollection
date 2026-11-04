@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "editionId": "",
+  "mapId": "",
+  "sourceReferences": [],
+  "rightsNotes": "",
+  "coordinateSystem": {
+    "name": "",
+    "units": "",
+    "upAxis": "",
+    "origin": ""
+  },
+  "bounds": null,
+  "layers": {
+    "geometry": [],
+    "materials": [],
+    "environment": []
+  },
+  "generation": {
+    "tool": "",
+    "version": "",
+    "command": "",
+    "inputs": []
+  }
+}

@@ -1,0 +1,881 @@
+{
+  "schemaVersion": 1,
+  "source": "https://noclip.website/",
+  "collectedAt": "2026-11-04T12:53:56.850Z",
+  "scope": "Map labels and categories only; no scene or game assets.",
+  "editions": [
+    {
+      "id": "classic",
+      "title": "World of Warcraft",
+      "maps": [
+        {
+          "id": "eastern-kingdoms/ironforge-dun-morogh",
+          "name": "Ironforge, Dun Morogh",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/stormwind-elwynn-forest",
+          "name": "Stormwind, Elwynn Forest",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/undercity-tirisfal-glades",
+          "name": "Undercity, Tirisfal Glades",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/lakeshire-redridge-mountains",
+          "name": "Lakeshire, Redridge Mountains",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/blackrock-mountain-burning-steppes",
+          "name": "Blackrock Mountain, Burning Steppes",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/booty-bay-stranglethorn-vale",
+          "name": "Booty Bay, Stranglethorn Vale",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/light-s-hope-chapel-eastern-plaguelands",
+          "name": "Light's Hope Chapel, Eastern Plaguelands",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/aerie-peak-hinterlands",
+          "name": "Aerie Peak, Hinterlands",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/tarren-mill-hillsbrad-foothills",
+          "name": "Tarren Mill, Hillsbrad Foothills",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/stonewrought-dam-loch-modan",
+          "name": "Stonewrought Dam, Loch Modan",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/kargath-badlands",
+          "name": "Kargath, Badlands",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/thorium-point-searing-gorge",
+          "name": "Thorium Point, Searing Gorge",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/stonard-swamp-of-sorrows",
+          "name": "Stonard, Swamp of Sorrows",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/nethergarde-keep-blasted-lands",
+          "name": "Nethergarde Keep, Blasted Lands",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/the-dark-portal-blasted-lands",
+          "name": "The Dark Portal, Blasted Lands",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/darkshire-duskwood",
+          "name": "Darkshire, Duskwood",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/grom-gol-base-camp-stranglethorn-vale",
+          "name": "Grom'gol Base Camp, Stranglethorn Vale",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/gurubashi-arena-stranglethorn-vale",
+          "name": "Gurubashi Arena, Stranglethorn Vale",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/sentinel-hill-westfall",
+          "name": "Sentinel Hill, Westfall",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/karazhan-deadwind-pass",
+          "name": "Karazhan, Deadwind Pass",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "eastern-kingdoms/southshore-hillsbrad-foothills",
+          "name": "Southshore, Hillsbrad Foothills",
+          "category": "Eastern Kingdoms"
+        },
+        {
+          "id": "kalimdor/thunder-bluff-mulgore",
+          "name": "Thunder Bluff, Mulgore",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/darnassus-teldrassil",
+          "name": "Darnassus, Teldrassil",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/gm-island",
+          "name": "GM Island",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/archimonde-s-bones-hyjal",
+          "name": "Archimonde's Bones, Hyjal",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/everlook-winterspring",
+          "name": "Everlook, Winterspring",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/auberdine-darkshore",
+          "name": "Auberdine, Darkshore",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/astranaar-ashenvale",
+          "name": "Astranaar, Ashenvale",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/mor-shan-rampart-barrens",
+          "name": "Mor'shan Rampart, Barrens",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/splintertree-post-ashenvale",
+          "name": "Splintertree Post, Ashenvale",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/bloodvenom-post-felwood",
+          "name": "Bloodvenom Post, Felwood",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/talonbranch-glade-felwood",
+          "name": "Talonbranch Glade, Felwood",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/the-crossroads-barrens",
+          "name": "The Crossroads, Barrens",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/orgrimmar-durotar",
+          "name": "Orgrimmar, Durotar",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/ratchet-barrens",
+          "name": "Ratchet, Barrens",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/sun-rock-retreat-stonetalon-mountains",
+          "name": "Sun Rock Retreat, Stonetalon Mountains",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/nijel-s-point-desolace",
+          "name": "Nijel's Point, Desolace",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/shadowprey-village-desolace",
+          "name": "Shadowprey Village, Desolace",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/dire-maul-arena-feralas",
+          "name": "Dire Maul Arena, Feralas",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/thalanaar-feralas",
+          "name": "Thalanaar, Feralas",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/camp-mojache-feralas",
+          "name": "Camp Mojache, Feralas",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/feathermoon-stronghold-feralas",
+          "name": "Feathermoon Stronghold, Feralas",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/cenarion-hold-silithus",
+          "name": "Cenarion Hold, Silithus",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/marshal-s-refuge-un-goro-crater",
+          "name": "Marshal's Refuge, Un'Goro Crater",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/gadgetzan-tanaris",
+          "name": "Gadgetzan, Tanaris",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/mirage-raceway-thousand-needles",
+          "name": "Mirage Raceway, Thousand Needles",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/freewind-post-thousand-needles",
+          "name": "Freewind Post, Thousand Needles",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/theramore-isle-dustwallow-marsh",
+          "name": "Theramore Isle, Dustwallow Marsh",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "kalimdor/alcaz-island-dustwallow-marsh",
+          "name": "Alcaz Island, Dustwallow Marsh",
+          "category": "Kalimdor"
+        },
+        {
+          "id": "instances/zul-farak",
+          "name": "Zul-Farak",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/blackrock-depths",
+          "name": "Blackrock Depths",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/scholomance",
+          "name": "Scholomance",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/deeprun-tram",
+          "name": "Deeprun Tram",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/deadmines",
+          "name": "Deadmines",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/shadowfang-keep",
+          "name": "Shadowfang Keep",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/blackrock-spire",
+          "name": "Blackrock Spire",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/stratholme",
+          "name": "Stratholme",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/mauradon",
+          "name": "Mauradon",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/wailing-caverns",
+          "name": "Wailing Caverns",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/razorfen-kraul",
+          "name": "Razorfen Kraul",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/razorfen-downs",
+          "name": "Razorfen Downs",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/blackfathom-deeps",
+          "name": "Blackfathom Deeps",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/uldaman",
+          "name": "Uldaman",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/gnomeregon",
+          "name": "Gnomeregon",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/sunken-temple",
+          "name": "Sunken Temple",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/scarlet-monastery-graveyard",
+          "name": "Scarlet Monastery - Graveyard",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/scarlet-monastery-cathedral",
+          "name": "Scarlet Monastery - Cathedral",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/scarlet-monastery-library",
+          "name": "Scarlet Monastery - Library",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/scarlet-monastery-armory",
+          "name": "Scarlet Monastery - Armory",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/ragefire-chasm",
+          "name": "Ragefire Chasm",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/dire-maul",
+          "name": "Dire Maul",
+          "category": "Instances"
+        },
+        {
+          "id": "raids/onyxia-s-lair",
+          "name": "Onyxia's Lair",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/molten-core",
+          "name": "Molten Core",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/blackwing-lair",
+          "name": "Blackwing Lair",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/zul-gurub",
+          "name": "Zul'gurub",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/naxxramas",
+          "name": "Naxxramas",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/ahn-qiraj-temple",
+          "name": "Ahn'Qiraj Temple",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/ruins-of-ahn-qiraj",
+          "name": "Ruins of Ahn'qiraj",
+          "category": "Raids"
+        },
+        {
+          "id": "pvp/alterac-valley",
+          "name": "Alterac Valley",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/warsong-gulch",
+          "name": "Warsong Gulch",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/arathi-basin",
+          "name": "Arathi Basin",
+          "category": "PvP"
+        },
+        {
+          "id": "unreleased/pvp-zone-02-azshara-crater",
+          "name": "PvP Zone 02 (\"Azshara Crater\")",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/dragon-isles-developer-island",
+          "name": "Dragon Isles, Developer Island",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/swamp-of-sorrows-prototype-developer-island",
+          "name": "Swamp of Sorrows Prototype, Developer Island",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/water-test-developer-island",
+          "name": "Water test, Developer Island",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/verdant-fields-emerald-dream",
+          "name": "Verdant Fields, Emerald Dream",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/emerald-forest-emerald-dream",
+          "name": "Emerald Forest, Emerald Dream",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/untextured-canyon-emerald-dream",
+          "name": "Untextured canyon, Emerald Dream",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/test-01",
+          "name": "Test 01",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/scott-test",
+          "name": "Scott Test",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/collin-test",
+          "name": "Collin Test",
+          "category": "Unreleased"
+        },
+        {
+          "id": "unreleased/scarlet-monastery-prototype",
+          "name": "Scarlet Monastery Prototype",
+          "category": "Unreleased"
+        }
+      ]
+    },
+    {
+      "id": "the-burning-crusade",
+      "title": "World of Warcraft: The Burning Crusade",
+      "maps": [
+        {
+          "id": "outland/the-dark-portal-hellfire-peninsula",
+          "name": "The Dark Portal, Hellfire Peninsula",
+          "category": "Outland"
+        },
+        {
+          "id": "outland/cenarion-refuge-zangarmarsh",
+          "name": "Cenarion Refuge, Zangarmarsh",
+          "category": "Outland"
+        },
+        {
+          "id": "outland/area-52-netherstorm",
+          "name": "Area 52, Netherstorm",
+          "category": "Outland"
+        },
+        {
+          "id": "outland/telaar-nagrand",
+          "name": "Telaar, Nagrand",
+          "category": "Outland"
+        },
+        {
+          "id": "outland/black-temple-shadowmoon-valley",
+          "name": "Black Temple, Shadowmoon Valley",
+          "category": "Outland"
+        },
+        {
+          "id": "outland/shattrath-terokkar-forest",
+          "name": "Shattrath, Terokkar Forest",
+          "category": "Outland"
+        },
+        {
+          "id": "quel-thalas/silvermoon-city-eversong-woods",
+          "name": "Silvermoon City, Eversong Woods",
+          "category": "Quel'thalas"
+        },
+        {
+          "id": "quel-thalas/tranquillien-ghostlands",
+          "name": "Tranquillien, Ghostlands",
+          "category": "Quel'thalas"
+        },
+        {
+          "id": "quel-thalas/sunspire-sunstrider-isle",
+          "name": "Sunspire, Sunstrider Isle",
+          "category": "Quel'thalas"
+        },
+        {
+          "id": "azuremist-isles/exodar-azuremist-isles",
+          "name": "Exodar, Azuremist Isles",
+          "category": "Azuremist Isles"
+        },
+        {
+          "id": "azuremist-isles/ammen-vale-azuremist-isles",
+          "name": "Ammen Vale, Azuremist Isles",
+          "category": "Azuremist Isles"
+        },
+        {
+          "id": "azuremist-isles/blood-watch-azuremist-isles",
+          "name": "Blood Watch, Azuremist Isles",
+          "category": "Azuremist Isles"
+        },
+        {
+          "id": "instances/hellfire-citadel-the-shattered-halls",
+          "name": "Hellfire Citadel: The Shattered Halls",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/hellfire-citadel-the-blood-furnace",
+          "name": "Hellfire Citadel: The Blood Furnace",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/hellfire-citadel-ramparts",
+          "name": "Hellfire Citadel: Ramparts",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/coilfang-the-steamvault",
+          "name": "Coilfang: The Steamvault",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/coilfang-the-underbog",
+          "name": "Coilfang: The Underbog",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/coilfang-the-slave-pens",
+          "name": "Coilfang: The Slave Pens",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/caverns-of-time-the-escape-from-durnholde",
+          "name": "Caverns of Time: The Escape from Durnholde",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/tempest-keep-the-arcatraz",
+          "name": "Tempest Keep: The Arcatraz",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/tempest-keep-the-botanica",
+          "name": "Tempest Keep: The Botanica",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/tempest-keep-the-mechanar",
+          "name": "Tempest Keep: The Mechanar",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/auchindoun-shadow-labyrinth",
+          "name": "Auchindoun: Shadow Labyrinth",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/auchindoun-sethekk-halls",
+          "name": "Auchindoun: Sethekk Halls",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/auchindoun-mana-tombs",
+          "name": "Auchindoun: Mana-Tombs",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/auchindoun-auchenai-crypts",
+          "name": "Auchindoun: Auchenai Crypts",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/the-sunwell-magister-s-terrace",
+          "name": "The Sunwell: Magister's Terrace",
+          "category": "Instances"
+        },
+        {
+          "id": "raids/tempest-keep",
+          "name": "Tempest Keep",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/karazhan",
+          "name": "Karazhan",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/caverns-of-time-hyjal",
+          "name": "Caverns of Time: Hyjal",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/black-temple",
+          "name": "Black Temple",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/gruul-s-lair",
+          "name": "Gruul's Lair",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/zul-aman",
+          "name": "Zul'Aman",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/the-sunwell-plateau",
+          "name": "The Sunwell: Plateau",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/magtheridon-s-lair",
+          "name": "Magtheridon's Lair",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/coilfang-serpentshrine-cavern",
+          "name": "Coilfang: Serpentshrine Cavern",
+          "category": "Raids"
+        },
+        {
+          "id": "pvp/eye-of-the-storm",
+          "name": "Eye of the Storm",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/arena-nagrand",
+          "name": "Arena: Nagrand",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/arena-blade-s-edge",
+          "name": "Arena: Blade's Edge",
+          "category": "PvP"
+        }
+      ]
+    },
+    {
+      "id": "wrath-of-the-lich-king",
+      "title": "World of Warcraft: Wrath of the Lich King",
+      "maps": [
+        {
+          "id": "northrend/icecrown-citadel-icecrown",
+          "name": "Icecrown Citadel, Icecrown",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/dalaran-crystalsong-forest",
+          "name": "Dalaran, Crystalsong Forest",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/grizzlemaw-grizzly-hills",
+          "name": "Grizzlemaw, Grizzly Hills",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/gundrak-zul-drak",
+          "name": "Gundrak, Zul'Drak",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/river-s-heart-sholazar-basin",
+          "name": "River's Heart, Sholazar Basin",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/terrace-of-the-makers-the-storm-peaks",
+          "name": "Terrace of the Makers, The Storm Peaks",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/the-nexus-coldarra",
+          "name": "The Nexus, Coldarra",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/ulduar-the-storm-peaks",
+          "name": "Ulduar, The Storm Peaks",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/utgarde-keep-howling-fjord",
+          "name": "Utgarde Keep, Howling Fjord",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/valiance-keep-borean-tundra",
+          "name": "Valiance Keep, Borean Tundra",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/warsong-hold-borean-tundra",
+          "name": "Warsong Hold, Borean Tundra",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/wintergrasp-fortress-wintergrasp",
+          "name": "Wintergrasp Fortress, Wintergrasp",
+          "category": "Northrend"
+        },
+        {
+          "id": "northrend/wyrmrest-temple-dragonblight",
+          "name": "Wyrmrest Temple, Dragonblight",
+          "category": "Northrend"
+        },
+        {
+          "id": "instances/ebon-hold",
+          "name": "Ebon Hold",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/utgarde-keep",
+          "name": "Utgarde Keep",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/utgarde-pinnacle",
+          "name": "Utgarde Pinnacle",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/drak-theron-keep",
+          "name": "Drak'Theron Keep",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/violet-hold",
+          "name": "Violet Hold",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/gundrak",
+          "name": "Gundrak",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/ahn-kahet-the-old-kingdom",
+          "name": "Ahn'kahet: The Old Kingdom",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/azjol-nerub",
+          "name": "Azjol'Nerub",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/halls-of-stone",
+          "name": "Halls of Stone",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/halls-of-lightning",
+          "name": "Halls of Lightning",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/the-oculus",
+          "name": "The Oculus",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/the-nexus",
+          "name": "The Nexus",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/the-culling-of-stratholme",
+          "name": "The Culling of Stratholme",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/trial-of-the-champion",
+          "name": "Trial of the Champion",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/the-forge-of-souls",
+          "name": "The Forge of Souls",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/pit-of-saron",
+          "name": "Pit of Saron",
+          "category": "Instances"
+        },
+        {
+          "id": "instances/halls-of-reflection",
+          "name": "Halls of Reflection",
+          "category": "Instances"
+        },
+        {
+          "id": "raids/icecrown-citadel",
+          "name": "Icecrown Citadel",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/ulduar",
+          "name": "Ulduar",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/the-obsidian-sanctum",
+          "name": "The Obsidian Sanctum",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/vault-of-archavon",
+          "name": "Vault of Archavon",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/trial-of-the-crusader",
+          "name": "Trial of the Crusader",
+          "category": "Raids"
+        },
+        {
+          "id": "raids/the-eye-of-eternity",
+          "name": "The Eye of Eternity",
+          "category": "Raids"
+        },
+        {
+          "id": "pvp/strand-of-the-ancients",
+          "name": "Strand of the Ancients",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/isle-of-conquest",
+          "name": "Isle of Conquest",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/arena-dalaran-sewers",
+          "name": "Arena: Dalaran Sewers",
+          "category": "PvP"
+        },
+        {
+          "id": "pvp/arena-the-ring-of-valor",
+          "name": "Arena: The Ring of Valor",
+          "category": "PvP"
+        }
+      ]
+    }
+  ]
+}

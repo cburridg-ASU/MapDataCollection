@@ -1,0 +1,10 @@
+node_modules/
+dist/
+
+# Keep licensed/local source material out of version control.
+data/source/*
+!data/source/.gitkeep
+
+# Local browser/test artifacts.
+playwright-report/
+test-results/

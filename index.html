@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Create and explore original, procedural fantasy landscapes with Three.js."
+    />
+    <meta name="theme-color" content="#111716" />
+    <title>Fieldcraft — World builder</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Fieldcraft home">
+          <span class="brand-mark" aria-hidden="true">F</span>
+          <span class="brand-name">FIELDCRAFT<span> / WORLD LAB</span></span>
+        </a>
+        <div class="topbar-center">
+          <span class="status-dot"></span>
+          <span>PROCEDURAL ENVIRONMENT STUDIO</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="button button-quiet" id="import-catalog" type="button">
+            <span aria-hidden="true">↑</span> Import catalog
+          </button>
+          <input id="catalog-file" type="file" accept=".json,application/json" hidden />
+          <button class="button button-primary" id="export-scene" type="button">
+            <span aria-hidden="true">↗</span> Export .glb
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="control-panel" aria-label="World settings">
+          <div class="panel-heading">
+            <div class="eyebrow">WORLD GENERATOR <span>01 — 04</span></div>
+            <h1>Shape a new<br /><em>frontier.</em></h1>
+            <p>Build an original landscape from procedural terrain and your own parameters.</p>
+          </div>
+
+          <section class="control-section">
+            <div class="section-title"><span>01</span> REFERENCE CATALOG</div>
+            <label class="field-label" for="edition-select">Game edition</label>
+            <select id="edition-select" class="select-field"></select>
+            <label class="field-label field-label-spaced" for="map-select">Map inspiration</label>
+            <select id="map-select" class="select-field"></select>
+            <p class="field-note" id="catalog-status" aria-live="polite">Loading map catalog…</p>
+          </section>
+
+          <section class="control-section">
+            <div class="section-title"><span>02</span> LANDSCAPE PROFILE</div>
+            <label class="field-label" for="biome-select">Biome palette</label>
+            <select id="biome-select" class="select-field">
+              <option value="temperate">Temperate highlands</option>
+              <option value="tundra">Frostbound tundra</option>
+              <option value="desert">Sun-scorched badlands</option>
+              <option value="swamp">Murkfen wetlands</option>
+              <option value="arcane">Arcane wilds</option>
+              <option value="fel">Fel-scarred frontier</option>
+            </select>
+            <div class="field-row">
+              <label class="field-label" for="seed-input">World seed</label>
+              <button class="text-button" id="random-seed" type="button">Randomize</button>
+            </div>
+            <input id="seed-input" class="text-field" type="text" maxlength="32" value="ashen-reach-07" />
+            <div class="field-row slider-heading">
+              <label class="field-label" for="scale-input">World scale</label>
+              <output id="scale-output" for="scale-input">240 km</output>
+            </div>
+            <input id="scale-input" class="range-field" type="range" min="120" max="420" step="20" value="240" />
+            <div class="field-row slider-heading">
+              <label class="field-label" for="relief-input">Terrain relief</label>
+              <output id="relief-output" for="relief-input">42%</output>
+            </div>
+            <input id="relief-input" class="range-field" type="range" min="10" max="90" step="1" value="42" />
+          </section>
+
+          <section class="control-section feature-section">
+            <div class="section-title"><span>03</span> SCENE DETAILS</div>
+            <label class="check-row" for="vegetation-toggle">
+              <span class="check-copy"><strong>Vegetation</strong><small>Procedural trees and brush</small></span>
+              <input id="vegetation-toggle" type="checkbox" checked />
+              <span class="toggle" aria-hidden="true"></span>
+            </label>
+            <label class="check-row" for="ruins-toggle">
+              <span class="check-copy"><strong>Ancient ruins</strong><small>Scattered stone landmarks</small></span>
+              <input id="ruins-toggle" type="checkbox" checked />
+              <span class="toggle" aria-hidden="true"></span>
+            </label>
+          </section>
+
+          <div class="panel-footer">
+            <button class="button button-generate" id="generate-world" type="button">
+              <span aria-hidden="true">✳</span> Generate environment
+            </button>
+            <button class="button button-manifest" id="export-manifest" type="button">
+              Export settings manifest <span aria-hidden="true">↓</span>
+            </button>
+            <p class="disclaimer">Original procedural output. Catalog names are references only; no game assets are included.</p>
+          </div>
+        </aside>
+
+        <section class="viewport" aria-label="3D environment preview">
+          <canvas id="world-canvas" aria-label="Interactive 3D terrain preview"></canvas>
+          <div class="viewport-top">
+            <div class="world-label">
+              <span class="world-overline">GENERATED WORLD <span id="world-edition">/ CLASSIC</span></span>
+              <h2 id="world-name">Ashen Reach</h2>
+              <span class="world-subtitle" id="world-subtitle">Eastern Kingdoms · Temperate highlands</span>
+            </div>
+            <div class="view-tools">
+              <button class="icon-button" id="reset-camera" type="button" aria-label="Reset camera" title="Reset camera">⌖</button>
+              <button class="icon-button" id="toggle-wireframe" type="button" aria-label="Toggle wireframe" title="Toggle wireframe">▦</button>
+            </div>
+          </div>
+          <div class="viewport-bottom">
+            <div class="world-stats">
+              <span><i class="stat-icon">◫</i> <strong id="stat-size">240 × 240</strong><small> KM</small></span>
+              <span><i class="stat-icon">⌁</i> <strong id="stat-seed">ASHEN-REACH-07</strong><small> SEED</small></span>
+            </div>
+            <div class="camera-hint"><span>DRAG</span> ORBIT <b>·</b> <span>SCROLL</span> ZOOM <b>·</b> <span>RIGHT-DRAG</span> PAN</div>
+          </div>
+          <div class="loading-state" id="loading-state" role="status" hidden>
+            <span class="loading-orbit"></span>
+            <span>Generating terrain…</span>
+          </div>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+      <footer class="app-footer">
+        <span>FIELDCRAFT <span class="footer-divider">/</span> A PROCEDURAL WORLD-BUILDING TOOL</span>
+        <span>THREE.JS <span class="footer-divider">·</span> ORIGINAL GENERATED GEOMETRY</span>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
