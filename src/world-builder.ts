@@ -23,6 +23,7 @@ import {
 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { proceduralSeed } from "./seed";
+import type { MapStudy, MaterialObservation, TerrainObservation } from "./map-study";
 
 export type BiomeId =
   | "temperate"
@@ -204,6 +205,67 @@ function terrainColor(height: number, relief: number, bands: [number, string][])
   return new Color(bands[bands.length - 1]![1]);
 }
 
+function observationWeight(
+  xMeters: number,
+  zMeters: number,
+  centerX: number,
+  centerZ: number,
+  width: number,
+  depth: number,
+): number {
+  const edgeDistance = Math.max(
+    Math.abs(xMeters - centerX) / (width / 2),
+    Math.abs(zMeters - centerZ) / (depth / 2),
+  );
+  const blend = Math.max(0, 1 - edgeDistance);
+  return blend * blend * (3 - 2 * blend);
+}
+
+function paletteForBiome(label: string, fallback: BiomePalette): BiomePalette {
+  const normalized = label.toLowerCase();
+  if (/tundra|snow|ice|frost|glacier/.test(normalized)) return palettes.tundra;
+  if (/desert|sand|arid|badland/.test(normalized)) return palettes.desert;
+  if (/swamp|marsh|wetland|bog|fen/.test(normalized)) return palettes.swamp;
+  if (/arcane|crystal|magic/.test(normalized)) return palettes.arcane;
+  if (/fel|corrupt|demonic/.test(normalized)) return palettes.fel;
+  if (/temperate|forest|grassland|highland/.test(normalized)) {
+    return palettes.temperate;
+  }
+  return fallback;
+}
+
+function observedColor(
+  study: MapStudy | null,
+  usedOn: MaterialObservation["usedOn"],
+  fallback: string,
+): { color: string; label?: string } {
+  const material = study?.materials
+    .filter((entry) => entry.usedOn === usedOn)
+    .at(-1);
+  if (!material) return { color: fallback };
+  const color = /^#[0-9a-f]{6}$/i.test(material.approximateColor)
+    ? material.approximateColor
+    : fallback;
+  return { color, label: material.label };
+}
+
+function terrainObservationHeight(
+  observation: TerrainObservation,
+  xMeters: number,
+  zMeters: number,
+): number | null {
+  const weight = observationWeight(
+    xMeters,
+    zMeters,
+    observation.xMeters,
+    observation.zMeters,
+    observation.widthMeters,
+    observation.depthMeters,
+  );
+  if (weight <= 0) return null;
+  return weight;
+}
+
 function disposeObject(object: Object3D): void {
   object.traverse((child) => {
     if (child instanceof Mesh) {
@@ -284,7 +346,7 @@ export class WorldBuilder {
     });
   }
 
-  build(settings: WorldSettings): void {
+  build(settings: WorldSettings, study: MapStudy | null = null): void {
     const palette = palettes[settings.biome];
     if (this.scene.children.includes(this.world)) {
       this.scene.remove(this.world);
@@ -294,15 +356,25 @@ export class WorldBuilder {
     this.baseMaterials.length = 0;
     this.world = new Object3D();
     this.world.name = "Generated Environment";
-    this.activeSettings = { ...settings };
+    const calibratedWidthKm = (study?.calibration?.widthMeters ?? 0) / 1000;
+    const calibratedDepthKm = (study?.calibration?.depthMeters ?? 0) / 1000;
+    const sizeX = calibratedWidthKm > 0 ? calibratedWidthKm : settings.scale;
+    const sizeZ = calibratedDepthKm > 0 ? calibratedDepthKm : settings.scale;
+    const worldSize = Math.max(sizeX, sizeZ);
+    this.activeSettings = { ...settings, scale: worldSize };
+    this.controls.minDistance = Math.max(0.001, worldSize * 0.15);
+    this.controls.maxDistance = Math.max(1, worldSize * 4);
+    this.camera.near = Math.max(0.0001, worldSize * 0.001);
+    this.camera.far = Math.max(3000, worldSize * 20);
+    this.camera.updateProjectionMatrix();
     const seed = proceduralSeed(
       settings.seed,
       settings.editionId,
       settings.mapId,
     );
     const random = randomGenerator(seed);
-    const size = settings.scale;
-    const relief = settings.relief * 0.48;
+    const size = Math.max(sizeX, sizeZ);
+    const relief = settings.relief * 0.48 * (size / 240);
     const shadowBounds = size * 0.72;
     this.keyLight.shadow.camera.left = -shadowBounds;
     this.keyLight.shadow.camera.right = shadowBounds;
@@ -310,16 +382,78 @@ export class WorldBuilder {
     this.keyLight.shadow.camera.bottom = -shadowBounds;
     this.keyLight.shadow.camera.updateProjectionMatrix();
     const segments = 144;
-    const geometry = new PlaneGeometry(size, size, segments, segments);
+    const geometry = new PlaneGeometry(sizeX, sizeZ, segments, segments);
     const positions = geometry.getAttribute("position");
     const colors: number[] = [];
 
     for (let index = 0; index < positions.count; index += 1) {
-      const x = positions.getX(index) / size;
-      const z = positions.getY(index) / size;
-      const height = terrainHeight(x + 0.5, z + 0.5, seed, relief);
+      const x = positions.getX(index);
+      const z = positions.getY(index);
+      const normalizedX = x / sizeX + 0.5;
+      const normalizedZ = z / sizeZ + 0.5;
+      const xMeters = normalizedX * (study?.calibration?.widthMeters ?? 0);
+      const zMeters = normalizedZ * (study?.calibration?.depthMeters ?? 0);
+      let height = terrainHeight(
+        normalizedX,
+        normalizedZ,
+        seed,
+        relief,
+      );
+      let colorPalette = palette;
+      if (study?.calibration) {
+        for (const observation of study.terrain) {
+          const weight = terrainObservationHeight(
+            observation,
+            xMeters,
+            zMeters,
+          );
+          if (weight === null) continue;
+          height =
+            height * (1 - weight) +
+            (observation.elevationMeters / 1000) * weight;
+          colorPalette = paletteForBiome(observation.biome, colorPalette);
+          if (
+            observation.terrainType === "river" ||
+            observation.terrainType === "lake"
+          ) {
+            colorPalette = {
+              ...colorPalette,
+              bands: [
+                [0.08, colorPalette.water],
+                [0.38, colorPalette.water],
+                [0.7, colorPalette.water],
+                [0.88, colorPalette.water],
+                [1, colorPalette.water],
+              ],
+            };
+          } else if (
+            observation.terrainType === "cliff" ||
+            observation.terrainType === "ridge"
+          ) {
+            height += (observation.terrainType === "cliff" ? 0.04 : 0.02) * size * weight;
+          } else if (observation.terrainType === "valley") {
+            height -= 0.015 * size * weight;
+          }
+        }
+      }
       positions.setZ(index, height);
-      const color = terrainColor(height, relief, palette.bands);
+      const color = terrainColor(height, relief, colorPalette.bands);
+      if (study?.calibration) {
+        for (const material of study.materials) {
+          if (material.usedOn !== "terrain") continue;
+          const weight = observationWeight(
+            xMeters,
+            zMeters,
+            material.xMeters,
+            material.zMeters,
+            material.widthMeters,
+            material.depthMeters,
+          );
+          if (weight > 0 && /^#[0-9a-f]{6}$/i.test(material.approximateColor)) {
+            color.lerp(new Color(material.approximateColor), weight);
+          }
+        }
+      }
       colors.push(color.r, color.g, color.b);
     }
 
@@ -338,8 +472,9 @@ export class WorldBuilder {
     terrain.receiveShadow = true;
     this.world.add(terrain);
 
+    const waterAppearance = observedColor(study, "water", palette.water);
     const waterMaterial = new MeshStandardMaterial({
-      color: palette.water,
+      color: waterAppearance.color,
       roughness: 0.27,
       metalness: 0.08,
       transparent: true,
@@ -347,32 +482,46 @@ export class WorldBuilder {
       wireframe: this.wireframe,
     });
     this.baseMaterials.push(waterMaterial);
-    const water = new Mesh(new PlaneGeometry(size, size), waterMaterial);
+    waterMaterial.name = waterAppearance.label
+      ? `Original water material · observed ${waterAppearance.label}`
+      : "Original generated water material";
+    const water = new Mesh(new PlaneGeometry(sizeX, sizeZ), waterMaterial);
     water.name = "Water Plane";
     water.rotation.x = -Math.PI / 2;
-    water.position.y = -2.2;
+    water.position.y = -0.002;
     this.world.add(water);
 
+    const vegetationAppearance = observedColor(
+      study,
+      "vegetation",
+      palette.vegetation,
+    );
+    const buildingAppearance = observedColor(study, "building", palette.stone);
+    const rockAppearance = observedColor(study, "rock", palette.stone);
     const trunkMaterial = new MeshStandardMaterial({
       color: settings.biome === "desert" ? "#80704d" : "#514437",
       roughness: 1,
       wireframe: this.wireframe,
     });
     const foliageMaterial = new MeshStandardMaterial({
-      color: palette.vegetation,
+      color: vegetationAppearance.color,
       roughness: 0.9,
       wireframe: this.wireframe,
     });
     const stoneMaterial = new MeshStandardMaterial({
-      color: palette.stone,
+      color: rockAppearance.color,
       roughness: 1,
       wireframe: this.wireframe,
     });
     this.baseMaterials.push(trunkMaterial, foliageMaterial, stoneMaterial);
 
-    if (settings.vegetation) {
+    const hasObservedTrees = study?.landmarks.some(
+      (landmark) => landmark.kind === "tree",
+    );
+    if (settings.vegetation && !hasObservedTrees) {
       const trunks: { position: Vector3; scale: Vector3; rotation: number }[] = [];
       const crowns: { position: Vector3; scale: Vector3; rotation: number }[] = [];
+      const sizeRatio = Math.min(sizeX, sizeZ) / 240;
       const count = settings.biome === "desert" ? 70 : 240;
       const canopyGeometry =
         settings.biome === "swamp" || settings.biome === "arcane"
@@ -381,13 +530,18 @@ export class WorldBuilder {
       const desertGeometry = new CylinderGeometry(0.32, 0.52, 4.5, 7);
 
       for (let index = 0; index < count; index += 1) {
-        const x = random() * size * 0.92 - size * 0.46;
-        const z = random() * size * 0.92 - size * 0.46;
-        const height = terrainHeight(x / size + 0.5, z / size + 0.5, seed, relief);
+        const x = random() * sizeX * 0.92 - sizeX * 0.46;
+        const z = random() * sizeZ * 0.92 - sizeZ * 0.46;
+        const height = terrainHeight(
+          x / sizeX + 0.5,
+          z / sizeZ + 0.5,
+          seed,
+          relief,
+        );
         if (height < 0.8 || height > relief * 0.48 || random() < 0.24) continue;
 
-        const treeHeight = 2.7 + random() * 4.8;
-        const width = 0.7 + random() * 0.8;
+        const treeHeight = (2.7 + random() * 4.8) * sizeRatio;
+        const width = (0.7 + random() * 0.8) * sizeRatio;
         if (settings.biome === "desert") {
           trunks.push({
             position: new Vector3(x, height + 2.2, z),
@@ -421,38 +575,60 @@ export class WorldBuilder {
       }
     }
 
-    const rocks: { position: Vector3; scale: Vector3; rotation: number }[] = [];
-    for (let index = 0; index < 110; index += 1) {
-      const x = random() * size * 0.94 - size * 0.47;
-      const z = random() * size * 0.94 - size * 0.47;
-      const height = terrainHeight(x / size + 0.5, z / size + 0.5, seed, relief);
-      if (height < 1 || random() < 0.58) continue;
-      const width = 0.5 + random() * 1.7;
-      rocks.push({
-        position: new Vector3(x, height + width * 0.25, z),
-        scale: new Vector3(width, width * (0.45 + random() * 0.7), width),
-        rotation: random() * Math.PI * 2,
-      });
-    }
-    addInstances(
-      new DodecahedronGeometry(1, 0),
-      stoneMaterial,
-      rocks,
-      this.world,
+    const hasObservedRocks = study?.landmarks.some(
+      (landmark) => landmark.kind === "rock",
     );
+    if (!hasObservedRocks) {
+      const rocks: { position: Vector3; scale: Vector3; rotation: number }[] = [];
+      const sizeRatio = Math.min(sizeX, sizeZ) / 240;
+      for (let index = 0; index < 110; index += 1) {
+        const x = random() * sizeX * 0.94 - sizeX * 0.47;
+        const z = random() * sizeZ * 0.94 - sizeZ * 0.47;
+        const height = terrainHeight(
+          x / sizeX + 0.5,
+          z / sizeZ + 0.5,
+          seed,
+          relief,
+        );
+        if (height < 1 * sizeRatio || random() < 0.58) continue;
+        const width = (0.5 + random() * 1.7) * sizeRatio;
+        rocks.push({
+          position: new Vector3(x, height + width * 0.25, z),
+          scale: new Vector3(width, width * (0.45 + random() * 0.7), width),
+          rotation: random() * Math.PI * 2,
+        });
+      }
+      addInstances(
+        new DodecahedronGeometry(1, 0),
+        stoneMaterial,
+        rocks,
+        this.world,
+      );
+    }
 
-    if (settings.ruins) {
+    const hasObservedStructures = study?.landmarks.some(
+      (landmark) =>
+        landmark.kind === "building" || landmark.kind === "structure",
+    );
+    if (settings.ruins && !hasObservedStructures) {
       const ruins: { position: Vector3; scale: Vector3; rotation: number }[] = [];
+      const sizeRatio = Math.min(sizeX, sizeZ) / 240;
       const blockCount = 34;
       for (let index = 0; index < blockCount; index += 1) {
         const angle = random() * Math.PI * 2;
-        const radius = 18 + random() * size * 0.22;
+        const radius = (18 + random() * size * 0.22) * sizeRatio;
         const x = Math.cos(angle) * radius;
         const z = Math.sin(angle) * radius;
-        const height = terrainHeight(x / size + 0.5, z / size + 0.5, seed, relief);
+        const height = terrainHeight(
+          x / sizeX + 0.5,
+          z / sizeZ + 0.5,
+          seed,
+          relief,
+        );
         if (height < 0.5) continue;
         const column = random() > 0.38;
-        const blockHeight = column ? 3 + random() * 9 : 1 + random() * 2;
+        const blockHeight =
+          (column ? 3 + random() * 9 : 1 + random() * 2) * sizeRatio;
         ruins.push({
           position: new Vector3(x, height + blockHeight / 2, z),
           scale: new Vector3(
@@ -466,10 +642,115 @@ export class WorldBuilder {
       addInstances(new BoxGeometry(1, 1, 1), stoneMaterial, ruins, this.world);
     }
 
+    if (study?.calibration) {
+      const observedTrees = study.landmarks.filter(
+        (landmark) => landmark.kind === "tree",
+      );
+      const treeTrunks = observedTrees.map((landmark) => {
+        const width = landmark.widthMeters / 1000;
+        const depth = landmark.depthMeters / 1000;
+        const height = landmark.heightMeters / 1000;
+        return {
+          position: new Vector3(
+            (landmark.xMeters / study.calibration!.widthMeters - 0.5) * sizeX,
+            landmark.elevationMeters / 1000 + height * 0.35,
+            (landmark.zMeters / study.calibration!.depthMeters - 0.5) * sizeZ,
+          ),
+          scale: new Vector3(width * 0.22, height * 0.7, depth * 0.22),
+          rotation: (landmark.rotationDegrees * Math.PI) / 180,
+        };
+      });
+      const treeCrowns = observedTrees.map((landmark) => {
+        const width = landmark.widthMeters / 1000;
+        const depth = landmark.depthMeters / 1000;
+        const height = landmark.heightMeters / 1000;
+        return {
+          position: new Vector3(
+            (landmark.xMeters / study.calibration!.widthMeters - 0.5) * sizeX,
+            landmark.elevationMeters / 1000 + height * 0.77,
+            (landmark.zMeters / study.calibration!.depthMeters - 0.5) * sizeZ,
+          ),
+          scale: new Vector3(width * 0.72, height * 0.52, depth * 0.72),
+          rotation: (landmark.rotationDegrees * Math.PI) / 180,
+        };
+      });
+      addInstances(
+        new CylinderGeometry(0.5, 0.72, 1, 6),
+        trunkMaterial,
+        treeTrunks,
+        this.world,
+      );
+      addInstances(
+        new ConeGeometry(0.5, 1, 7),
+        foliageMaterial,
+        treeCrowns,
+        this.world,
+      );
+
+      const observedStructures = study.landmarks.filter(
+        (landmark) =>
+          landmark.kind === "building" ||
+          landmark.kind === "structure" ||
+          landmark.kind === "other",
+      );
+      const structurePlacements = observedStructures.map((landmark) => ({
+        position: new Vector3(
+          (landmark.xMeters / study.calibration!.widthMeters - 0.5) * sizeX,
+          landmark.elevationMeters / 1000 + landmark.heightMeters / 2000,
+          (landmark.zMeters / study.calibration!.depthMeters - 0.5) * sizeZ,
+        ),
+        scale: new Vector3(
+          landmark.widthMeters / 1000,
+          landmark.heightMeters / 1000,
+          landmark.depthMeters / 1000,
+        ),
+        rotation: (landmark.rotationDegrees * Math.PI) / 180,
+      }));
+      const observedBuildingMaterial = new MeshStandardMaterial({
+        color: buildingAppearance.color,
+        roughness: 0.95,
+        wireframe: this.wireframe,
+      });
+      observedBuildingMaterial.name = buildingAppearance.label
+        ? `Original blockout material · observed ${buildingAppearance.label}`
+        : "Original generated blockout material";
+      this.baseMaterials.push(observedBuildingMaterial);
+      addInstances(
+        new BoxGeometry(1, 1, 1),
+        observedBuildingMaterial,
+        structurePlacements,
+        this.world,
+      );
+
+      const observedRocks = study.landmarks.filter(
+        (landmark) => landmark.kind === "rock",
+      );
+      const rockPlacements = observedRocks.map((landmark) => ({
+        position: new Vector3(
+          (landmark.xMeters / study.calibration!.widthMeters - 0.5) * sizeX,
+          landmark.elevationMeters / 1000 + landmark.heightMeters / 2000,
+          (landmark.zMeters / study.calibration!.depthMeters - 0.5) * sizeZ,
+        ),
+        scale: new Vector3(
+          landmark.widthMeters / 2000,
+          landmark.heightMeters / 2000,
+          landmark.depthMeters / 2000,
+        ),
+        rotation: (landmark.rotationDegrees * Math.PI) / 180,
+      }));
+      addInstances(
+        new DodecahedronGeometry(1, 0),
+        stoneMaterial,
+        rockPlacements,
+        this.world,
+      );
+    }
+
     this.scene.add(this.world);
     this.scene.fog = new Fog(palette.fog, size * 1.15, size * 3.6);
     this.scene.background = new Color(palette.sky);
     this.renderer.setClearColor(palette.sky);
+    this.resetCamera();
   }
 
   setWireframe(enabled: boolean): void {

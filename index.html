@@ -22,6 +22,9 @@
           <span>PROCEDURAL ENVIRONMENT STUDIO</span>
         </div>
         <div class="topbar-actions">
+          <button class="button button-quiet" id="open-study" type="button">
+            <span aria-hidden="true">⌖</span> Map study
+          </button>
           <button class="button button-quiet" id="import-catalog" type="button">
             <span aria-hidden="true">↑</span> Import catalog
           </button>
@@ -41,13 +44,13 @@
           </div>
 
           <section class="control-section">
-            <div class="section-title"><span>01</span> REFERENCE CATALOG</div>
+            <div class="section-title"><span>01</span> REFERENCE DATA</div>
             <label class="field-label" for="edition-select">Game edition</label>
             <select id="edition-select" class="select-field"></select>
-            <label class="field-label field-label-spaced" for="map-select">Map inspiration</label>
+            <label class="field-label field-label-spaced" for="map-select">Reference map</label>
             <select id="map-select" class="select-field"></select>
             <p class="field-note" id="catalog-status" aria-live="polite">Loading map catalog…</p>
-            <p class="field-note reference-note">The selected map and edition change the procedural seed. The catalog contains names only, not terrain geometry.</p>
+            <p class="field-note reference-note">Catalog entries are labels only. Record calibrated observations in Map study to drive the scene.</p>
           </section>
 
           <section class="control-section">
@@ -107,7 +110,7 @@
           <canvas id="world-canvas" aria-label="Interactive 3D terrain preview"></canvas>
           <div class="viewport-top">
             <div class="world-label">
-              <span class="world-overline">GENERATED WORLD <span id="world-edition">/ CLASSIC</span></span>
+              <span class="world-overline">MAP STUDY PREVIEW <span id="world-edition">/ CLASSIC</span></span>
               <h2 id="world-name">Ashen Reach</h2>
               <span class="world-subtitle" id="world-subtitle">Eastern Kingdoms · Temperate highlands</span>
             </div>
@@ -135,6 +138,89 @@
         <span>THREE.JS <span class="footer-divider">·</span> ORIGINAL GENERATED GEOMETRY</span>
       </footer>
     </div>
+    <dialog class="study-dialog" id="study-dialog" aria-labelledby="study-title">
+      <header class="study-header">
+        <div>
+          <div class="eyebrow">REFERENCE CAPTURE <span>LOCAL TO THIS BROWSER</span></div>
+          <h2 id="study-title">Map study</h2>
+          <p id="study-map-title">Choose a catalog map to start recording observations.</p>
+        </div>
+        <button class="icon-button study-close" id="close-study" type="button" aria-label="Close map study">×</button>
+      </header>
+      <div class="study-body">
+        <section class="study-calibration">
+          <div class="section-title"><span>01</span> MAP SCALE &amp; COORDINATES</div>
+          <p class="study-help">Record measured map bounds. Origin is the northwest corner; +X east/right, +Z south/down, elevation upward. Use meters consistently.</p>
+          <form id="calibration-form" class="study-form">
+            <label class="study-field">Map width (m)<input name="widthMeters" type="number" min="0.01" step="any" required /></label>
+            <label class="study-field">Map depth (m)<input name="depthMeters" type="number" min="0.01" step="any" required /></label>
+            <label class="study-field study-field-wide">How was the origin/bounds identified?<input name="originDescription" type="text" maxlength="240" required placeholder="e.g. northwest shoreline to southeast ridge" /></label>
+            <button class="button button-primary" type="submit">Save calibration</button>
+          </form>
+          <p class="study-help" id="calibration-status" aria-live="polite">Calibrate bounds before adding position-based observations.</p>
+        </section>
+
+        <section class="study-observations">
+          <div class="section-title"><span>02</span> FIELD OBSERVATIONS</div>
+          <div class="study-tabs" role="tablist" aria-label="Observation type">
+            <button class="study-tab active" type="button" role="tab" aria-selected="true" data-observation-tab="landmark">Landmark</button>
+            <button class="study-tab" type="button" role="tab" aria-selected="false" data-observation-tab="terrain">Terrain / biome</button>
+            <button class="study-tab" type="button" role="tab" aria-selected="false" data-observation-tab="material">Material</button>
+          </div>
+          <form id="observation-form" class="study-form">
+            <input name="observationKind" type="hidden" value="landmark" />
+            <label class="study-field study-field-wide">Label<input name="label" type="text" maxlength="100" required placeholder="Descriptive name" /></label>
+
+            <div class="observation-fields" data-observation-fields="landmark">
+              <label class="study-field">Object type<select name="kind"><option value="building">Building</option><option value="tree">Tree</option><option value="rock">Rock / boulder</option><option value="structure">Other structure</option><option value="other">Other</option></select></label>
+              <label class="study-field">Elevation (m)<input name="elevationMeters" type="number" step="any" value="0" required /></label>
+              <label class="study-field">X from west (m)<input name="xMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field">Z from north (m)<input name="zMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field">Width (m)<input name="widthMeters" type="number" min="0.01" step="any" required /></label>
+              <label class="study-field">Depth (m)<input name="depthMeters" type="number" min="0.01" step="any" required /></label>
+              <label class="study-field">Height (m)<input name="heightMeters" type="number" min="0.01" step="any" required /></label>
+              <label class="study-field">Rotation (°)<input name="rotationDegrees" type="number" step="any" value="0" required /></label>
+            </div>
+
+            <div class="observation-fields" data-observation-fields="terrain" hidden>
+              <label class="study-field">Terrain type<select name="terrainType"><option value="plain">Plain</option><option value="hill">Hill</option><option value="ridge">Ridge</option><option value="valley">Valley</option><option value="cliff">Cliff</option><option value="river">River</option><option value="lake">Lake</option><option value="coast">Coast</option><option value="road">Road / path</option><option value="other">Other</option></select></label>
+              <label class="study-field">Biome label<input name="biome" type="text" maxlength="80" required placeholder="e.g. temperate forest" /></label>
+              <label class="study-field">Center X (m)<input name="xMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field">Center Z (m)<input name="zMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field">Region width (m)<input name="widthMeters" type="number" min="0.01" step="any" required /></label>
+              <label class="study-field">Region depth (m)<input name="depthMeters" type="number" min="0.01" step="any" required /></label>
+              <label class="study-field">Elevation (m)<input name="elevationMeters" type="number" step="any" value="0" required /></label>
+            </div>
+
+            <div class="observation-fields" data-observation-fields="material" hidden>
+              <label class="study-field">Material type<select name="materialType"><option value="ground">Ground / soil</option><option value="rock">Rock</option><option value="wood">Wood</option><option value="water">Water</option><option value="metal">Metal</option><option value="other">Other</option></select></label>
+              <label class="study-field">Observed on<select name="usedOn"><option value="terrain">Terrain</option><option value="building">Building</option><option value="vegetation">Vegetation</option><option value="rock">Rock</option><option value="water">Water</option><option value="other">Other</option></select></label>
+              <label class="study-field">Approx. color<input name="approximateColor" type="color" value="#718269" /></label>
+              <label class="study-field">Observed area width (m)<input name="widthMeters" type="number" min="0.01" step="any" value="10" required /></label>
+              <label class="study-field">Observed area depth (m)<input name="depthMeters" type="number" min="0.01" step="any" value="10" required /></label>
+              <label class="study-field">Center X (m)<input name="xMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field">Center Z (m)<input name="zMeters" type="number" min="0" step="any" required /></label>
+              <label class="study-field study-field-wide">Appearance / texture description<input name="appearance" type="text" maxlength="240" required placeholder="e.g. mottled olive grass, fine rocky patches" /></label>
+            </div>
+
+            <label class="study-field">Confidence<select name="confidence"><option value="high">High — measured / clear</option><option value="medium" selected>Medium — estimated</option><option value="low">Low — rough estimate</option></select></label>
+            <label class="study-field study-field-wide">Notes<input name="notes" type="text" maxlength="240" placeholder="How measured; visible context; uncertainty" /></label>
+            <p class="study-help study-field-wide">Material entries are descriptions and approximate colors only. Do not upload or copy game texture files.</p>
+            <button class="button button-primary study-submit" type="submit">Add observation</button>
+          </form>
+        </section>
+      </div>
+      <section class="study-records">
+        <div class="section-title"><span>03</span> SAVED FOR THIS MAP</div>
+        <div class="study-counts" id="study-counts"></div>
+        <div class="study-record-list" id="study-record-list"></div>
+      </section>
+      <footer class="study-footer">
+        <label class="button button-quiet study-import-button">Import study JSON<input id="study-file" type="file" accept=".json,application/json" hidden /></label>
+        <span class="study-storage-note">Autosaved in this browser only. Export JSON to keep/share your notes.</span>
+        <button class="button button-primary" id="export-study" type="button">Export map study JSON</button>
+      </footer>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

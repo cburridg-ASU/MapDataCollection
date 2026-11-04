@@ -6,6 +6,14 @@ import {
   type BiomeId,
   type WorldSettings,
 } from "./world-builder";
+import {
+  loadMapStudy,
+  parseStudyFile,
+  saveMapStudy,
+  updateObservedAt,
+  type MapStudy,
+  type ObservationConfidence,
+} from "./map-study";
 
 const elements = {
   edition: document.querySelector<HTMLSelectElement>("#edition-select")!,
@@ -34,6 +42,17 @@ const elements = {
   randomSeed: document.querySelector<HTMLButtonElement>("#random-seed")!,
   resetCamera: document.querySelector<HTMLButtonElement>("#reset-camera")!,
   wireframe: document.querySelector<HTMLButtonElement>("#toggle-wireframe")!,
+  openStudy: document.querySelector<HTMLButtonElement>("#open-study")!,
+  studyDialog: document.querySelector<HTMLDialogElement>("#study-dialog")!,
+  closeStudy: document.querySelector<HTMLButtonElement>("#close-study")!,
+  studyTitle: document.querySelector<HTMLElement>("#study-map-title")!,
+  calibrationForm: document.querySelector<HTMLFormElement>("#calibration-form")!,
+  calibrationStatus: document.querySelector<HTMLElement>("#calibration-status")!,
+  observationForm: document.querySelector<HTMLFormElement>("#observation-form")!,
+  studyCounts: document.querySelector<HTMLElement>("#study-counts")!,
+  studyRecords: document.querySelector<HTMLElement>("#study-record-list")!,
+  studyFile: document.querySelector<HTMLInputElement>("#study-file")!,
+  exportStudy: document.querySelector<HTMLButtonElement>("#export-study")!,
 };
 
 const builder = new WorldBuilder(
@@ -42,6 +61,8 @@ const builder = new WorldBuilder(
 
 let editions: CatalogEdition[] = [];
 let currentSettings: WorldSettings | null = null;
+let currentStudy: MapStudy | null = null;
+let activeObservationTab = "landmark";
 let toastTimer: number | undefined;
 
 function selectedEdition(): CatalogEdition | undefined {
@@ -122,6 +143,189 @@ function readSettings(): WorldSettings {
   };
 }
 
+function getCurrentStudy(): MapStudy {
+  const edition = selectedEdition();
+  const map = selectedMap();
+  if (!edition || !map) {
+    throw new Error("Choose a map before opening its study.");
+  }
+  if (
+    currentStudy?.editionId === edition.id &&
+    currentStudy.mapId === map.id
+  ) {
+    return currentStudy;
+  }
+  currentStudy = loadMapStudy(edition, map);
+  return currentStudy;
+}
+
+function syncStudyDialog(): void {
+  const edition = selectedEdition();
+  const map = selectedMap();
+  if (!edition || !map) return;
+
+  const study = getCurrentStudy();
+  elements.studyTitle.textContent = `${edition.title} / ${map.name}`;
+  const calibration = study.calibration;
+  const calibrationFields = elements.calibrationForm.elements;
+  (calibrationFields.namedItem("widthMeters") as HTMLInputElement).value =
+    calibration?.widthMeters.toString() ?? "";
+  (calibrationFields.namedItem("depthMeters") as HTMLInputElement).value =
+    calibration?.depthMeters.toString() ?? "";
+  (
+    calibrationFields.namedItem("originDescription") as HTMLInputElement
+  ).value = calibration?.originDescription ?? "";
+  elements.calibrationStatus.textContent = calibration
+    ? `Calibrated bounds: ${calibration.widthMeters} m × ${calibration.depthMeters} m. Coordinates are measured from the northwest origin.`
+    : "Calibrate bounds before adding position-based observations.";
+  updateObservationTab(activeObservationTab);
+  renderStudyRecords(study);
+}
+
+function updateObservationTab(kind: string): void {
+  activeObservationTab = kind;
+  (
+    elements.observationForm.elements.namedItem(
+      "observationKind",
+    ) as HTMLInputElement
+  ).value = kind;
+  for (const tab of document.querySelectorAll<HTMLButtonElement>(
+    "[data-observation-tab]",
+  )) {
+    const active = tab.dataset.observationTab === kind;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  }
+  for (const fields of document.querySelectorAll<HTMLElement>(
+    "[data-observation-fields]",
+  )) {
+    const active = fields.dataset.observationFields === kind;
+    fields.hidden = !active;
+    for (const control of fields.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement
+    >("input, select")) {
+      control.disabled = !active;
+    }
+  }
+}
+
+function renderStudyRecords(study: MapStudy): void {
+  elements.studyCounts.replaceChildren();
+  const counts = [
+    ["Landmarks", study.landmarks.length],
+    ["Terrain regions", study.terrain.length],
+    ["Material notes", study.materials.length],
+  ];
+  for (const [label, count] of counts) {
+    const item = document.createElement("span");
+    item.className = "study-count";
+    const strong = document.createElement("strong");
+    strong.textContent = String(count);
+    item.append(strong, ` ${label}`);
+    elements.studyCounts.append(item);
+  }
+
+  elements.studyRecords.replaceChildren();
+  const records = [
+    ...study.landmarks.map((record) => ({
+      id: record.id,
+      label: record.label,
+      type: `Landmark · ${record.kind}`,
+      kind: "landmarks",
+    })),
+    ...study.terrain.map((record) => ({
+      id: record.id,
+      label: record.label,
+      type: `Terrain · ${record.terrainType} · ${record.biome}`,
+      kind: "terrain",
+    })),
+    ...study.materials.map((record) => ({
+      id: record.id,
+      label: record.label,
+      type: `Material · ${record.materialType} on ${record.usedOn}`,
+      kind: "materials",
+    })),
+  ];
+
+  if (records.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "study-empty";
+    empty.textContent =
+      "No observations yet. Calibrate the map, then add landmarks, terrain regions, and material descriptions.";
+    elements.studyRecords.append(empty);
+    return;
+  }
+
+  for (const record of records) {
+    const row = document.createElement("div");
+    row.className = "study-record";
+    const copy = document.createElement("span");
+    copy.className = "study-record-copy";
+    const title = document.createElement("strong");
+    title.textContent = record.label;
+    const detail = document.createElement("small");
+    detail.textContent = record.type;
+    copy.append(title, detail);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "study-record-delete";
+    remove.textContent = "Remove";
+    remove.setAttribute("aria-label", `Remove ${record.label}`);
+    remove.addEventListener("click", () => {
+      const mutable = getCurrentStudy();
+      if (record.kind === "landmarks") {
+        mutable.landmarks = mutable.landmarks.filter(
+          (item) => item.id !== record.id,
+        );
+      } else if (record.kind === "terrain") {
+        mutable.terrain = mutable.terrain.filter(
+          (item) => item.id !== record.id,
+        );
+      } else {
+        mutable.materials = mutable.materials.filter(
+          (item) => item.id !== record.id,
+        );
+      }
+      try {
+        persistStudy(mutable);
+        void generateWorld();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Could not update map study.");
+      }
+    });
+    row.append(copy, remove);
+    elements.studyRecords.append(row);
+  }
+}
+
+function persistStudy(study: MapStudy): void {
+  updateObservedAt(study);
+  try {
+    saveMapStudy(study);
+    currentStudy = study;
+    renderStudyRecords(study);
+  } catch (error) {
+    throw new Error(
+      `Could not save this map study in browser storage: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+}
+
+function formValue(form: HTMLFormElement, name: string): string {
+  const value = new FormData(form).get(name);
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function formNumber(form: HTMLFormElement, name: string): number {
+  const value = Number(formValue(form, name));
+  if (!Number.isFinite(value)) {
+    throw new Error(`Enter a valid number for ${name}.`);
+  }
+  return value;
+}
+
 function titleFromSeed(seed: string): string {
   const words = seed
     .split(/[^a-zA-Z0-9]+/)
@@ -139,15 +343,30 @@ async function generateWorld(): Promise<void> {
 
   try {
     const settings = readSettings();
-    builder.build(settings);
+    currentStudy = getCurrentStudy();
+    builder.build(settings, currentStudy);
     currentSettings = settings;
     elements.worldName.textContent = titleFromSeed(settings.seed);
     elements.worldEdition.textContent = `/ ${selectedEdition()!.id.replaceAll("-", " ").toUpperCase()}`;
-    elements.worldSubtitle.textContent = `${settings.category} · ${biomeLabel(settings.biome)} · inspired by ${settings.name}`;
-    elements.statSize.textContent = `${settings.scale} × ${settings.scale}`;
+    const observationCount =
+      currentStudy.landmarks.length +
+      currentStudy.terrain.length +
+      currentStudy.materials.length;
+    const measuredWidthKm =
+      (currentStudy.calibration?.widthMeters ?? 0) / 1000;
+    const measuredDepthKm =
+      (currentStudy.calibration?.depthMeters ?? 0) / 1000;
+    elements.worldSubtitle.textContent = observationCount
+      ? `${settings.category} · ${observationCount} measured observations · ${settings.name}`
+      : `${settings.category} · ${biomeLabel(settings.biome)} · reference only: ${settings.name}`;
+    elements.statSize.textContent = currentStudy.calibration
+      ? `${measuredWidthKm.toFixed(2)} × ${measuredDepthKm.toFixed(2)}`
+      : `${settings.scale} × ${settings.scale}`;
     elements.statSeed.textContent = settings.seed.toUpperCase();
     showToast(
-      "Procedural terrain generated from your seed and selected map reference; no WoW terrain data is included.",
+      observationCount
+        ? `Generated from ${observationCount} saved map observations and procedural fill.`
+        : "Generic procedural preview only. Record measured map observations to make this scene reflect the reference.",
     );
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Could not generate the environment.");
@@ -209,8 +428,18 @@ function exportManifest(): void {
       catalogMap: currentSettings.name,
       category: currentSettings.category,
     },
+    mapStudy: currentStudy
+      ? {
+          calibration: currentStudy.calibration,
+          observationCounts: {
+            landmarks: currentStudy.landmarks.length,
+            terrainRegions: currentStudy.terrain.length,
+            materialDescriptions: currentStudy.materials.length,
+          },
+        }
+      : null,
     settings: currentSettings,
-    note: "Catalog labels are references only. No game assets are included.",
+    note: "Map study records are manual observations. Generated geometry and materials are original placeholders; no game assets are included.",
   };
   downloadBlob(
     new Blob([`${JSON.stringify(manifest, null, 2)}\n`], {
@@ -222,10 +451,14 @@ function exportManifest(): void {
 }
 
 elements.edition.addEventListener("change", populateMaps);
+elements.edition.addEventListener("change", () => {
+  currentStudy = null;
+});
 elements.map.addEventListener("change", () => {
+  currentStudy = null;
   const map = selectedMap();
   if (map) {
-    elements.worldSubtitle.textContent = `${map.category} · inspiration: ${map.name}`;
+    elements.worldSubtitle.textContent = `${map.category} · reference selected: ${map.name}`;
   }
 });
 elements.scale.addEventListener("input", () => {
@@ -249,6 +482,224 @@ elements.wireframe.addEventListener("click", () => {
   builder.setWireframe(enabled);
 });
 elements.importCatalog.addEventListener("click", () => elements.catalogFile.click());
+elements.openStudy.addEventListener("click", () => {
+  try {
+    syncStudyDialog();
+    elements.studyDialog.showModal();
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Could not open map study.");
+  }
+});
+elements.closeStudy.addEventListener("click", () => elements.studyDialog.close());
+elements.studyDialog.addEventListener("click", (event) => {
+  if (event.target === elements.studyDialog) elements.studyDialog.close();
+});
+for (const tab of document.querySelectorAll<HTMLButtonElement>(
+  "[data-observation-tab]",
+)) {
+  tab.addEventListener("click", () => {
+    const kind = tab.dataset.observationTab;
+    if (kind) updateObservationTab(kind);
+  });
+}
+elements.calibrationForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  try {
+    const study = getCurrentStudy();
+    const widthMeters = formNumber(elements.calibrationForm, "widthMeters");
+    const depthMeters = formNumber(elements.calibrationForm, "depthMeters");
+    if (widthMeters <= 0 || depthMeters <= 0) {
+      throw new Error("Map width and depth must be greater than zero.");
+    }
+    const observations = [
+      ...study.landmarks,
+      ...study.terrain,
+      ...study.materials,
+    ];
+    if (
+      observations.some(
+        (observation) =>
+          observation.xMeters > widthMeters ||
+          observation.zMeters > depthMeters,
+      )
+    ) {
+      throw new Error(
+        "The new map bounds exclude saved observations. Update or remove those observations first.",
+      );
+    }
+    study.calibration = {
+      widthMeters,
+      depthMeters,
+      originDescription: formValue(
+        elements.calibrationForm,
+        "originDescription",
+      ),
+    };
+    persistStudy(study);
+    syncStudyDialog();
+    void generateWorld();
+    showToast("Map scale calibration saved locally.");
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Could not save calibration.");
+  }
+});
+elements.observationForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  try {
+    const study = getCurrentStudy();
+    if (!study.calibration) {
+      throw new Error("Save map width and depth before adding observations.");
+    }
+    const label = formValue(elements.observationForm, "label");
+    const xMeters = formNumber(elements.observationForm, "xMeters");
+    const zMeters = formNumber(elements.observationForm, "zMeters");
+    if (
+      xMeters < 0 ||
+      xMeters > study.calibration.widthMeters ||
+      zMeters < 0 ||
+      zMeters > study.calibration.depthMeters
+    ) {
+      throw new Error("The observation coordinates must fall inside calibrated map bounds.");
+    }
+    const base = {
+      id: crypto.randomUUID(),
+      label,
+      xMeters,
+      zMeters,
+      confidence: formValue(
+        elements.observationForm,
+        "confidence",
+      ) as ObservationConfidence,
+      notes: formValue(elements.observationForm, "notes"),
+    };
+
+    if (activeObservationTab === "landmark") {
+      const widthMeters = formNumber(elements.observationForm, "widthMeters");
+      const depthMeters = formNumber(elements.observationForm, "depthMeters");
+      const heightMeters = formNumber(elements.observationForm, "heightMeters");
+      if (widthMeters <= 0 || depthMeters <= 0 || heightMeters <= 0) {
+        throw new Error("Landmark width, depth, and height must be greater than zero.");
+      }
+      study.landmarks.push({
+        ...base,
+        kind: formValue(elements.observationForm, "kind") as
+          | "building"
+          | "tree"
+          | "rock"
+          | "structure"
+          | "other",
+        elevationMeters: formNumber(
+          elements.observationForm,
+          "elevationMeters",
+        ),
+        widthMeters,
+        depthMeters,
+        heightMeters,
+        rotationDegrees: formNumber(
+          elements.observationForm,
+          "rotationDegrees",
+        ),
+      });
+    } else if (activeObservationTab === "terrain") {
+      const widthMeters = formNumber(elements.observationForm, "widthMeters");
+      const depthMeters = formNumber(elements.observationForm, "depthMeters");
+      if (widthMeters <= 0 || depthMeters <= 0) {
+        throw new Error("Terrain region width and depth must be greater than zero.");
+      }
+      study.terrain.push({
+        ...base,
+        terrainType: formValue(elements.observationForm, "terrainType") as
+          | "plain"
+          | "hill"
+          | "ridge"
+          | "valley"
+          | "cliff"
+          | "river"
+          | "lake"
+          | "coast"
+          | "road"
+          | "other",
+        biome: formValue(elements.observationForm, "biome"),
+        widthMeters,
+        depthMeters,
+        elevationMeters: formNumber(
+          elements.observationForm,
+          "elevationMeters",
+        ),
+      });
+    } else {
+      const widthMeters = formNumber(elements.observationForm, "widthMeters");
+      const depthMeters = formNumber(elements.observationForm, "depthMeters");
+      if (widthMeters <= 0 || depthMeters <= 0) {
+        throw new Error("Observed area width and depth must be greater than zero.");
+      }
+      study.materials.push({
+        ...base,
+        materialType: formValue(
+          elements.observationForm,
+          "materialType",
+        ) as "ground" | "rock" | "wood" | "water" | "metal" | "other",
+        usedOn: formValue(elements.observationForm, "usedOn") as
+          | "terrain"
+          | "building"
+          | "vegetation"
+          | "rock"
+          | "water"
+          | "other",
+        approximateColor: formValue(
+          elements.observationForm,
+          "approximateColor",
+        ),
+        appearance: formValue(elements.observationForm, "appearance"),
+        widthMeters,
+        depthMeters,
+      });
+    }
+
+    persistStudy(study);
+    (elements.observationForm.elements.namedItem("label") as HTMLInputElement).value = "";
+    (elements.observationForm.elements.namedItem("notes") as HTMLInputElement).value = "";
+    void generateWorld();
+    showToast("Observation saved in this browser and applied to the generated scene.");
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Could not save observation.");
+  }
+});
+elements.exportStudy.addEventListener("click", () => {
+  try {
+    const study = getCurrentStudy();
+    downloadBlob(
+      new Blob([`${JSON.stringify(study, null, 2)}\n`], {
+        type: "application/json",
+      }),
+      `${fileSlug(study.editionId)}-${fileSlug(study.mapName)}-study.json`,
+    );
+    showToast("Map study JSON exported.");
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Could not export map study.");
+  }
+});
+elements.studyFile.addEventListener("change", async () => {
+  const file = elements.studyFile.files?.[0];
+  if (!file) return;
+  try {
+    const study = parseStudyFile(await file.text());
+    if (
+      study.editionId !== selectedEdition()?.id ||
+      study.mapId !== selectedMap()?.id
+    ) {
+      throw new Error("This study belongs to a different edition or map.");
+    }
+    persistStudy(study);
+    syncStudyDialog();
+    void generateWorld();
+    showToast(`Imported observations from ${file.name}.`);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Map study import failed.");
+  } finally {
+    elements.studyFile.value = "";
+  }
+});
 elements.catalogFile.addEventListener("change", async () => {
   const file = elements.catalogFile.files?.[0];
   if (!file) return;
