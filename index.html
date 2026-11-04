@@ -121,7 +121,7 @@
           </div>
           <div class="viewport-bottom">
             <div class="world-stats">
-              <span><i class="stat-icon">◫</i> <strong id="stat-size">240 × 240</strong><small> KM</small></span>
+              <span><i class="stat-icon">◫</i> <strong id="stat-size">240 × 240</strong><small id="stat-size-unit"> KM GENERATED</small></span>
               <span><i class="stat-icon">⌁</i> <strong id="stat-seed">ASHEN-REACH-07</strong><small> SEED</small></span>
             </div>
             <div class="camera-hint"><span>DRAG</span> ORBIT <b>·</b> <span>SCROLL</span> ZOOM <b>·</b> <span>RIGHT-DRAG</span> PAN</div>
@@ -149,15 +149,15 @@
       </header>
       <div class="study-body">
         <section class="study-calibration">
-          <div class="section-title"><span>01</span> MAP SCALE &amp; COORDINATES</div>
-          <p class="study-help">Record measured map bounds. Origin is the northwest corner; +X east/right, +Z south/down, elevation upward. Use meters consistently.</p>
+          <div class="section-title"><span>01</span> OPTIONAL REAL-WORLD SCALE</div>
+          <p class="study-help">Only enter dimensions when you have a trustworthy scale reference. Terrain regions use normalized map coordinates and can be recorded without meter measurements.</p>
           <form id="calibration-form" class="study-form">
-            <label class="study-field">Map width (m)<input name="widthMeters" type="number" min="0.01" step="any" required /></label>
-            <label class="study-field">Map depth (m)<input name="depthMeters" type="number" min="0.01" step="any" required /></label>
-            <label class="study-field study-field-wide">How was the origin/bounds identified?<input name="originDescription" type="text" maxlength="240" required placeholder="e.g. northwest shoreline to southeast ridge" /></label>
-            <button class="button button-primary" type="submit">Save calibration</button>
+            <label class="study-field">Map width (m)<input name="widthMeters" type="number" min="0.01" step="any" /></label>
+            <label class="study-field">Map depth (m)<input name="depthMeters" type="number" min="0.01" step="any" /></label>
+            <label class="study-field study-field-wide">Scale reference / method<input name="originDescription" type="text" maxlength="240" placeholder="How the dimensions were established" /></label>
+            <button class="button button-primary" type="submit">Save scale</button>
           </form>
-          <p class="study-help" id="calibration-status" aria-live="polite">Calibrate bounds before adding position-based observations.</p>
+          <p class="study-help" id="calibration-status" aria-live="polite">No physical scale recorded. Relative region mapping is available.</p>
         </section>
 
         <section class="study-observations">
@@ -183,13 +183,25 @@
             </div>
 
             <div class="observation-fields" data-observation-fields="terrain" hidden>
+              <p class="study-help study-field-wide">Trace the region on this schematic overhead canvas using the source map as a visual reference. The source scene is not embedded. Points run from 0 to 1 across this map, so no real-world scale is assumed.</p>
+              <svg id="region-map" class="region-map study-field-wide" viewBox="0 0 1000 700" role="img" aria-label="Overhead map canvas. Click to add map-relative terrain region boundary points." tabindex="0">
+                <rect class="region-map-surface" x="0" y="0" width="1000" height="700" />
+                <path class="region-map-grid" d="M250 0V700 M500 0V700 M750 0V700 M0 175H1000 M0 350H1000 M0 525H1000" />
+                <g id="region-layer"></g>
+                <polyline id="region-draft" class="region-draft" points="" />
+                <g id="region-draft-points"></g>
+              </svg>
+              <div class="region-map-toolbar study-field-wide">
+                <span id="region-point-count">0 points · add at least 3</span>
+                <div>
+                  <button class="button button-quiet" id="undo-region-point" type="button" disabled>Undo point</button>
+                  <button class="button button-quiet" id="clear-region-points" type="button" disabled>Clear</button>
+                </div>
+              </div>
               <label class="study-field">Terrain type<select name="terrainType"><option value="plain">Plain</option><option value="hill">Hill</option><option value="ridge">Ridge</option><option value="valley">Valley</option><option value="cliff">Cliff</option><option value="river">River</option><option value="lake">Lake</option><option value="coast">Coast</option><option value="road">Road / path</option><option value="other">Other</option></select></label>
               <label class="study-field">Biome label<input name="biome" type="text" maxlength="80" required placeholder="e.g. temperate forest" /></label>
-              <label class="study-field">Center X (m)<input name="xMeters" type="number" min="0" step="any" required /></label>
-              <label class="study-field">Center Z (m)<input name="zMeters" type="number" min="0" step="any" required /></label>
-              <label class="study-field">Region width (m)<input name="widthMeters" type="number" min="0.01" step="any" required /></label>
-              <label class="study-field">Region depth (m)<input name="depthMeters" type="number" min="0.01" step="any" required /></label>
-              <label class="study-field">Elevation (m)<input name="elevationMeters" type="number" step="any" value="0" required /></label>
+              <label class="study-field">Relative elevation (relief range)<input name="relativeElevation" type="number" min="-1" max="1" step="0.01" value="0.1" required /></label>
+              <p class="study-help study-field-wide">0 is the baseline; 1 reaches the configured relief maximum and -1 its minimum. This is relative, not a meter measurement.</p>
             </div>
 
             <div class="observation-fields" data-observation-fields="material" hidden>
@@ -206,7 +218,7 @@
             <label class="study-field">Confidence<select name="confidence"><option value="high">High — measured / clear</option><option value="medium" selected>Medium — estimated</option><option value="low">Low — rough estimate</option></select></label>
             <label class="study-field study-field-wide">Notes<input name="notes" type="text" maxlength="240" placeholder="How measured; visible context; uncertainty" /></label>
             <p class="study-help study-field-wide">Material entries are descriptions and approximate colors only. Do not upload or copy game texture files.</p>
-            <button class="button button-primary study-submit" type="submit">Add observation</button>
+            <button class="button button-primary study-submit" id="add-observation" type="submit">Add observation</button>
           </form>
         </section>
       </div>

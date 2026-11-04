@@ -8,16 +8,19 @@ export interface MapCalibration {
   originDescription: string;
 }
 
-interface ObservationBase {
+interface ObservationMetadata {
   id: string;
   label: string;
-  xMeters: number;
-  zMeters: number;
   confidence: ObservationConfidence;
   notes: string;
 }
 
-export interface LandmarkObservation extends ObservationBase {
+interface MeterPosition extends ObservationMetadata {
+  xMeters: number;
+  zMeters: number;
+}
+
+export interface LandmarkObservation extends MeterPosition {
   kind: "building" | "tree" | "rock" | "structure" | "other";
   elevationMeters: number;
   widthMeters: number;
@@ -26,7 +29,36 @@ export interface LandmarkObservation extends ObservationBase {
   rotationDegrees: number;
 }
 
-export interface TerrainObservation extends ObservationBase {
+export interface MapRelativePoint {
+  x: number;
+  z: number;
+}
+
+export function isMapPointInsideRegion(
+  boundary: readonly MapRelativePoint[],
+  x: number,
+  z: number,
+): boolean {
+  let isInside = false;
+  for (
+    let index = 0, previousIndex = boundary.length - 1;
+    index < boundary.length;
+    previousIndex = index, index += 1
+  ) {
+    const point = boundary[index]!;
+    const previous = boundary[previousIndex]!;
+    const crossesRay =
+      (point.z > z) !== (previous.z > z) &&
+      x <
+        ((previous.x - point.x) * (z - point.z)) /
+          (previous.z - point.z) +
+          point.x;
+    if (crossesRay) isInside = !isInside;
+  }
+  return isInside;
+}
+
+export interface TerrainRegionObservation extends ObservationMetadata {
   terrainType:
     | "plain"
     | "hill"
@@ -39,12 +71,11 @@ export interface TerrainObservation extends ObservationBase {
     | "road"
     | "other";
   biome: string;
-  widthMeters: number;
-  depthMeters: number;
-  elevationMeters: number;
+  boundary: MapRelativePoint[];
+  relativeElevation: number;
 }
 
-export interface MaterialObservation extends ObservationBase {
+export interface MaterialObservation extends MeterPosition {
   materialType: "ground" | "rock" | "wood" | "water" | "metal" | "other";
   appearance: string;
   usedOn: "terrain" | "building" | "vegetation" | "rock" | "water" | "other";
@@ -54,7 +85,7 @@ export interface MaterialObservation extends ObservationBase {
 }
 
 export interface MapStudy {
-  schemaVersion: 1;
+  schemaVersion: 2;
   editionId: string;
   editionTitle: string;
   mapId: string;
@@ -65,28 +96,58 @@ export interface MapStudy {
     units: "meters";
     xAxis: "east";
     zAxis: "south";
+    terrainRegions: "normalized-map-relative";
   };
   calibration: MapCalibration | null;
   landmarks: LandmarkObservation[];
-  terrain: TerrainObservation[];
+  terrain: TerrainRegionObservation[];
   materials: MaterialObservation[];
+}
+
+interface LegacyTerrainObservation extends MeterPosition {
+  terrainType: TerrainRegionObservation["terrainType"];
+  biome: string;
+  widthMeters: number;
+  depthMeters: number;
+  elevationMeters: number;
+}
+
+interface LegacyMapStudy
+  extends Omit<
+    MapStudy,
+    "schemaVersion" | "terrain" | "coordinateSystem"
+  > {
+  schemaVersion: 1;
+  coordinateSystem: {
+    units: "meters";
+    xAxis: "east";
+    zAxis: "south";
+  };
+  terrain: LegacyTerrainObservation[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function validBase(value: unknown): value is ObservationBase {
+function validMetadata(value: unknown): value is ObservationMetadata {
   if (!isRecord(value)) return false;
   return (
     typeof value.id === "string" &&
     typeof value.label === "string" &&
+    ["low", "medium", "high"].includes(String(value.confidence)) &&
+    typeof value.notes === "string"
+  );
+}
+
+function validMeterPosition(value: unknown): value is MeterPosition {
+  return (
+    validMetadata(value) &&
+    isRecord(value) &&
     typeof value.xMeters === "number" &&
     Number.isFinite(value.xMeters) &&
     typeof value.zMeters === "number" &&
-    Number.isFinite(value.zMeters) &&
-    ["low", "medium", "high"].includes(String(value.confidence)) &&
-    typeof value.notes === "string"
+    Number.isFinite(value.zMeters)
   );
 }
 
@@ -113,6 +174,98 @@ function hasPositiveNumbers(
   );
 }
 
+function isMapRelativePoint(value: unknown): value is MapRelativePoint {
+  return (
+    isRecord(value) &&
+    typeof value.x === "number" &&
+    Number.isFinite(value.x) &&
+    value.x >= 0 &&
+    value.x <= 1 &&
+    typeof value.z === "number" &&
+    Number.isFinite(value.z) &&
+    value.z >= 0 &&
+    value.z <= 1
+  );
+}
+
+function validRegionBoundary(boundary: unknown[]): boolean {
+  if (boundary.length < 3 || !boundary.every(isMapRelativePoint)) return false;
+  const points = boundary.filter(isMapRelativePoint);
+  if (
+    points.some((point, index) =>
+      points.slice(index + 1).some(
+        (other) => point.x === other.x && point.z === other.z,
+      ),
+    )
+  ) {
+    return false;
+  }
+  const area = points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length]!;
+    return sum + point.x * next.z - next.x * point.z;
+  }, 0);
+  if (Math.abs(area) <= 1e-8) return false;
+
+  const orientation = (
+    a: MapRelativePoint,
+    b: MapRelativePoint,
+    c: MapRelativePoint,
+  ): number =>
+    (b.x - a.x) * (c.z - a.z) - (b.z - a.z) * (c.x - a.x);
+  const intersects = (
+    a: MapRelativePoint,
+    b: MapRelativePoint,
+    c: MapRelativePoint,
+    d: MapRelativePoint,
+  ): boolean => {
+    const abC = orientation(a, b, c);
+    const abD = orientation(a, b, d);
+    const cdA = orientation(c, d, a);
+    const cdB = orientation(c, d, b);
+    const onSegment = (
+      start: MapRelativePoint,
+      point: MapRelativePoint,
+      end: MapRelativePoint,
+    ): boolean =>
+      Math.abs(orientation(start, end, point)) <= 1e-10 &&
+      point.x >= Math.min(start.x, end.x) - 1e-10 &&
+      point.x <= Math.max(start.x, end.x) + 1e-10 &&
+      point.z >= Math.min(start.z, end.z) - 1e-10 &&
+      point.z <= Math.max(start.z, end.z) + 1e-10;
+    if (abC * abD < 0 && cdA * cdB < 0) return true;
+    return (
+      onSegment(a, c, b) ||
+      onSegment(a, d, b) ||
+      onSegment(c, a, d) ||
+      onSegment(c, b, d)
+    );
+  };
+  for (let first = 0; first < points.length; first += 1) {
+    const firstNext = (first + 1) % points.length;
+    for (let second = first + 1; second < points.length; second += 1) {
+      const secondNext = (second + 1) % points.length;
+      if (
+        first === second ||
+        firstNext === second ||
+        secondNext === first
+      ) {
+        continue;
+      }
+      if (
+        intersects(
+          points[first]!,
+          points[firstNext]!,
+          points[second]!,
+          points[secondNext]!,
+        )
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 function isCalibration(value: unknown): value is MapCalibration {
   return (
     isRecord(value) &&
@@ -128,7 +281,7 @@ function isCalibration(value: unknown): value is MapCalibration {
 
 function isLandmark(value: unknown): value is LandmarkObservation {
   return (
-    validBase(value) &&
+    validMeterPosition(value) &&
     isRecord(value) &&
     ["building", "tree", "rock", "structure", "other"].includes(
       String(value.kind),
@@ -142,9 +295,53 @@ function isLandmark(value: unknown): value is LandmarkObservation {
   );
 }
 
-function isTerrainObservation(value: unknown): value is TerrainObservation {
+function isTerrainRegion(value: unknown): value is TerrainRegionObservation {
   return (
-    validBase(value) &&
+    validMetadata(value) &&
+    isRecord(value) &&
+    [
+      "plain",
+      "hill",
+      "ridge",
+      "valley",
+      "cliff",
+      "river",
+      "lake",
+      "coast",
+      "road",
+      "other",
+    ].includes(String(value.terrainType)) &&
+    typeof value.biome === "string" &&
+    typeof value.relativeElevation === "number" &&
+    Number.isFinite(value.relativeElevation) &&
+    value.relativeElevation >= -1 &&
+    value.relativeElevation <= 1 &&
+    Array.isArray(value.boundary) &&
+    validRegionBoundary(value.boundary)
+  );
+}
+
+function isMaterialObservation(value: unknown): value is MaterialObservation {
+  return (
+    validMeterPosition(value) &&
+    isRecord(value) &&
+    ["ground", "rock", "wood", "water", "metal", "other"].includes(
+      String(value.materialType),
+    ) &&
+    ["terrain", "building", "vegetation", "rock", "water", "other"].includes(
+      String(value.usedOn),
+    ) &&
+    typeof value.appearance === "string" &&
+    typeof value.approximateColor === "string" &&
+    hasPositiveNumbers(value, ["widthMeters", "depthMeters"])
+  );
+}
+
+function isLegacyTerrainObservation(
+  value: unknown,
+): value is LegacyTerrainObservation {
+  return (
+    validMeterPosition(value) &&
     isRecord(value) &&
     [
       "plain",
@@ -164,23 +361,7 @@ function isTerrainObservation(value: unknown): value is TerrainObservation {
   );
 }
 
-function isMaterialObservation(value: unknown): value is MaterialObservation {
-  return (
-    validBase(value) &&
-    isRecord(value) &&
-    ["ground", "rock", "wood", "water", "metal", "other"].includes(
-      String(value.materialType),
-    ) &&
-    ["terrain", "building", "vegetation", "rock", "water", "other"].includes(
-      String(value.usedOn),
-    ) &&
-    typeof value.appearance === "string" &&
-    typeof value.approximateColor === "string" &&
-    hasPositiveNumbers(value, ["widthMeters", "depthMeters"])
-  );
-}
-
-export function isMapStudy(value: unknown): value is MapStudy {
+function isLegacyMapStudy(value: unknown): value is LegacyMapStudy {
   if (!isRecord(value) || value.schemaVersion !== 1) return false;
   if (
     typeof value.editionId !== "string" ||
@@ -199,15 +380,119 @@ export function isMapStudy(value: unknown): value is MapStudy {
   ) {
     return false;
   }
+  const calibration = value.calibration;
+  if (calibration !== null && !isCalibration(calibration)) return false;
+  if (
+    calibration === null &&
+    value.landmarks.length + value.materials.length > 0
+  ) {
+    return false;
+  }
+  const inBounds = (observation: unknown): boolean => {
+    if (!isRecord(observation) || !isCalibration(calibration)) return false;
+    return (
+      typeof observation.xMeters === "number" &&
+      typeof observation.zMeters === "number" &&
+      observation.xMeters >= 0 &&
+      observation.xMeters <= calibration.widthMeters &&
+      observation.zMeters >= 0 &&
+      observation.zMeters <= calibration.depthMeters
+    );
+  };
+  return (
+    value.landmarks.every(
+      (observation) => isLandmark(observation) && inBounds(observation),
+    ) &&
+    value.terrain.every(
+      (observation) =>
+        isLegacyTerrainObservation(observation) && inBounds(observation),
+    ) &&
+    value.materials.every(
+      (observation) =>
+        isMaterialObservation(observation) && inBounds(observation),
+    )
+  );
+}
+
+function clampNormalized(value: number): number {
+  return Math.min(1, Math.max(0, value));
+}
+
+export function migrateMapStudy(value: unknown): MapStudy | null {
+  if (isMapStudy(value)) return value;
+  if (!isLegacyMapStudy(value)) return null;
+  const widthMeters = value.calibration?.widthMeters ?? 1;
+  const depthMeters = value.calibration?.depthMeters ?? 1;
+  return {
+    ...value,
+    schemaVersion: 2,
+    coordinateSystem: {
+      ...value.coordinateSystem,
+      terrainRegions: "normalized-map-relative",
+    },
+    terrain: value.terrain.map((region) => {
+      const left = clampNormalized(
+        (region.xMeters - region.widthMeters / 2) / widthMeters,
+      );
+      const right = clampNormalized(
+        (region.xMeters + region.widthMeters / 2) / widthMeters,
+      );
+      const top = clampNormalized(
+        (region.zMeters - region.depthMeters / 2) / depthMeters,
+      );
+      const bottom = clampNormalized(
+        (region.zMeters + region.depthMeters / 2) / depthMeters,
+      );
+      return {
+        id: region.id,
+        label: region.label,
+        confidence: region.confidence,
+        notes: region.notes,
+        terrainType: region.terrainType,
+        biome: region.biome,
+        boundary: [
+          { x: left, z: top },
+          { x: right, z: top },
+          { x: right, z: bottom },
+          { x: left, z: bottom },
+        ],
+        relativeElevation: Math.min(
+          1,
+          Math.max(
+            -1,
+            region.elevationMeters / Math.max(widthMeters, depthMeters),
+          ),
+        ),
+      };
+    }),
+  };
+}
+
+export function isMapStudy(value: unknown): value is MapStudy {
+  if (!isRecord(value) || value.schemaVersion !== 2) return false;
+  if (
+    typeof value.editionId !== "string" ||
+    typeof value.editionTitle !== "string" ||
+    typeof value.mapId !== "string" ||
+    typeof value.mapName !== "string" ||
+    typeof value.sourceUrl !== "string" ||
+    typeof value.observedAt !== "string" ||
+    !isRecord(value.coordinateSystem) ||
+    value.coordinateSystem.units !== "meters" ||
+    value.coordinateSystem.xAxis !== "east" ||
+    value.coordinateSystem.zAxis !== "south" ||
+    value.coordinateSystem.terrainRegions !== "normalized-map-relative" ||
+    !Array.isArray(value.landmarks) ||
+    !Array.isArray(value.terrain) ||
+    !Array.isArray(value.materials)
+  ) {
+    return false;
+  }
 
   const calibration = value.calibration;
   if (calibration !== null && !isCalibration(calibration)) return false;
 
-  const hasObservations =
-    value.landmarks.length + value.terrain.length + value.materials.length > 0;
-  if (calibration === null && hasObservations) return false;
-
-  const inBounds = (observation: unknown): boolean => {
+  const inMeterBounds = (observation: unknown): boolean => {
     if (!isRecord(observation)) return false;
     return (
       typeof observation.xMeters === "number" &&
@@ -222,15 +507,17 @@ export function isMapStudy(value: unknown): value is MapStudy {
 
   return (
     value.landmarks.every(
-      (observation) => isLandmark(observation) && inBounds(observation),
-    ) &&
-    value.terrain.every(
       (observation) =>
-        isTerrainObservation(observation) && inBounds(observation),
+        isLandmark(observation) &&
+        calibration !== null &&
+        inMeterBounds(observation),
     ) &&
+    value.terrain.every(isTerrainRegion) &&
     value.materials.every(
       (observation) =>
-        isMaterialObservation(observation) && inBounds(observation),
+        isMaterialObservation(observation) &&
+        calibration !== null &&
+        inMeterBounds(observation),
     )
   );
 }
@@ -240,7 +527,7 @@ export function createMapStudy(
   map: CatalogMap,
 ): MapStudy {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     editionId: edition.id,
     editionTitle: edition.title,
     mapId: map.id,
@@ -251,6 +538,7 @@ export function createMapStudy(
       units: "meters",
       xAxis: "east",
       zAxis: "south",
+      terrainRegions: "normalized-map-relative",
     },
     calibration: null,
     landmarks: [],
@@ -263,8 +551,10 @@ export function loadMapStudy(
   edition: CatalogEdition,
   map: CatalogMap,
 ): MapStudy {
-  const storageKey = `map-study-v1:${edition.id}:${map.id}`;
-  const serialized = localStorage.getItem(storageKey);
+  const storageKey = `map-study-v2:${edition.id}:${map.id}`;
+  const legacyStorageKey = `map-study-v1:${edition.id}:${map.id}`;
+  const serialized =
+    localStorage.getItem(storageKey) ?? localStorage.getItem(legacyStorageKey);
   if (!serialized) return createMapStudy(edition, map);
 
   let parsed: unknown;
@@ -278,18 +568,23 @@ export function loadMapStudy(
     );
   }
 
-  if (!isMapStudy(parsed)) {
+  const study = migrateMapStudy(parsed);
+  if (!study) {
     throw new Error(`Saved study for "${map.name}" has an unsupported format.`);
   }
-  if (parsed.editionId !== edition.id || parsed.mapId !== map.id) {
+  if (study.editionId !== edition.id || study.mapId !== map.id) {
     throw new Error("Saved study does not match the selected map.");
   }
-  return parsed;
+  if (localStorage.getItem(storageKey) === null) {
+    saveMapStudy(study);
+    localStorage.removeItem(legacyStorageKey);
+  }
+  return study;
 }
 
 export function saveMapStudy(study: MapStudy): void {
   localStorage.setItem(
-    `map-study-v1:${study.editionId}:${study.mapId}`,
+    `map-study-v2:${study.editionId}:${study.mapId}`,
     JSON.stringify(study),
   );
 }
@@ -309,8 +604,9 @@ export function parseStudyFile(serialized: string): MapStudy {
       }`,
     );
   }
-  if (!isMapStudy(parsed)) {
+  const study = migrateMapStudy(parsed);
+  if (!study) {
     throw new Error("The file is not a supported map study.");
   }
-  return parsed;
+  return study;
 }

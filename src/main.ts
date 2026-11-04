@@ -8,11 +8,14 @@ import {
 } from "./world-builder";
 import {
   loadMapStudy,
+  isMapStudy,
   parseStudyFile,
   saveMapStudy,
   updateObservedAt,
+  type MapRelativePoint,
   type MapStudy,
   type ObservationConfidence,
+  type TerrainRegionObservation,
 } from "./map-study";
 
 const elements = {
@@ -31,6 +34,7 @@ const elements = {
   worldEdition: document.querySelector<HTMLElement>("#world-edition")!,
   worldSubtitle: document.querySelector<HTMLElement>("#world-subtitle")!,
   statSize: document.querySelector<HTMLElement>("#stat-size")!,
+  statSizeUnit: document.querySelector<HTMLElement>("#stat-size-unit")!,
   statSeed: document.querySelector<HTMLElement>("#stat-seed")!,
   loading: document.querySelector<HTMLElement>("#loading-state")!,
   toast: document.querySelector<HTMLElement>("#toast")!,
@@ -49,6 +53,14 @@ const elements = {
   calibrationForm: document.querySelector<HTMLFormElement>("#calibration-form")!,
   calibrationStatus: document.querySelector<HTMLElement>("#calibration-status")!,
   observationForm: document.querySelector<HTMLFormElement>("#observation-form")!,
+  addObservation: document.querySelector<HTMLButtonElement>("#add-observation")!,
+  regionMap: document.querySelector<SVGSVGElement>("#region-map")!,
+  regionLayer: document.querySelector<SVGGElement>("#region-layer")!,
+  regionDraft: document.querySelector<SVGPolylineElement>("#region-draft")!,
+  regionDraftPoints: document.querySelector<SVGGElement>("#region-draft-points")!,
+  regionPointCount: document.querySelector<HTMLElement>("#region-point-count")!,
+  undoRegionPoint: document.querySelector<HTMLButtonElement>("#undo-region-point")!,
+  clearRegionPoints: document.querySelector<HTMLButtonElement>("#clear-region-points")!,
   studyCounts: document.querySelector<HTMLElement>("#study-counts")!,
   studyRecords: document.querySelector<HTMLElement>("#study-record-list")!,
   studyFile: document.querySelector<HTMLInputElement>("#study-file")!,
@@ -63,6 +75,7 @@ let editions: CatalogEdition[] = [];
 let currentSettings: WorldSettings | null = null;
 let currentStudy: MapStudy | null = null;
 let activeObservationTab = "landmark";
+let pendingRegionBoundary: MapRelativePoint[] = [];
 let toastTimer: number | undefined;
 
 function selectedEdition(): CatalogEdition | undefined {
@@ -176,10 +189,70 @@ function syncStudyDialog(): void {
     calibrationFields.namedItem("originDescription") as HTMLInputElement
   ).value = calibration?.originDescription ?? "";
   elements.calibrationStatus.textContent = calibration
-    ? `Calibrated bounds: ${calibration.widthMeters} m × ${calibration.depthMeters} m. Coordinates are measured from the northwest origin.`
-    : "Calibrate bounds before adding position-based observations.";
+    ? `Measured bounds: ${calibration.widthMeters} m × ${calibration.depthMeters} m. Meter-based landmark/material notes use the northwest origin.`
+    : "No physical scale recorded. Relative region mapping is available; meter-based notes need a trustworthy scale.";
   updateObservationTab(activeObservationTab);
   renderStudyRecords(study);
+}
+
+function regionColor(biome: string): string {
+  const label = biome.toLowerCase();
+  if (/tundra|snow|ice|frost|glacier/.test(label)) return "#b7d5d4";
+  if (/desert|sand|arid|badland/.test(label)) return "#d6b46f";
+  if (/swamp|marsh|wetland|bog|fen/.test(label)) return "#6e8e58";
+  if (/arcane|crystal|magic/.test(label)) return "#8f7bc0";
+  if (/fel|corrupt|demonic/.test(label)) return "#a29445";
+  if (/forest|woodland/.test(label)) return "#4b8a5a";
+  if (/plain|grassland|meadow/.test(label)) return "#9ab565";
+  return "#9b9d75";
+}
+
+function svgElement<K extends keyof SVGElementTagNameMap>(
+  name: K,
+): SVGElementTagNameMap[K] {
+  return document.createElementNS("http://www.w3.org/2000/svg", name);
+}
+
+function regionSvgPoint(point: MapRelativePoint): string {
+  return `${(point.x * 1000).toFixed(1)},${(point.z * 700).toFixed(1)}`;
+}
+
+function renderRegionMap(study: MapStudy): void {
+  elements.regionLayer.replaceChildren();
+  for (const region of study.terrain) {
+    const polygon = svgElement("polygon");
+    polygon.setAttribute(
+      "points",
+      region.boundary.map(regionSvgPoint).join(" "),
+    );
+    polygon.setAttribute("fill", regionColor(region.biome));
+    polygon.setAttribute("fill-opacity", "0.3");
+    polygon.setAttribute("stroke", regionColor(region.biome));
+    polygon.setAttribute("stroke-width", "3");
+    polygon.setAttribute("vector-effect", "non-scaling-stroke");
+    const title = svgElement("title");
+    title.textContent = `${region.label} · ${region.terrainType} · ${region.biome}`;
+    polygon.append(title);
+    elements.regionLayer.append(polygon);
+  }
+
+  elements.regionDraft.setAttribute(
+    "points",
+    pendingRegionBoundary.map(regionSvgPoint).join(" "),
+  );
+  elements.regionDraftPoints.replaceChildren();
+  for (const point of pendingRegionBoundary) {
+    const circle = svgElement("circle");
+    circle.setAttribute("cx", String(point.x * 1000));
+    circle.setAttribute("cy", String(point.z * 700));
+    circle.setAttribute("r", "7");
+    circle.setAttribute("class", "region-draft-point");
+    elements.regionDraftPoints.append(circle);
+  }
+  elements.regionPointCount.textContent =
+    `${pendingRegionBoundary.length} points · add at least 3`;
+  elements.undoRegionPoint.disabled = pendingRegionBoundary.length === 0;
+  elements.clearRegionPoints.disabled = pendingRegionBoundary.length === 0;
 }
 
 function updateObservationTab(kind: string): void {
@@ -203,13 +276,18 @@ function updateObservationTab(kind: string): void {
     fields.hidden = !active;
     for (const control of fields.querySelectorAll<
       HTMLInputElement | HTMLSelectElement
-    >("input, select")) {
+      | HTMLButtonElement
+    >("input, select, button")) {
       control.disabled = !active;
     }
   }
+  elements.addObservation.textContent =
+    kind === "terrain" ? "Add terrain region" : "Add observation";
+  if (currentStudy) renderRegionMap(currentStudy);
 }
 
 function renderStudyRecords(study: MapStudy): void {
+  renderRegionMap(study);
   elements.studyCounts.replaceChildren();
   const counts = [
     ["Landmarks", study.landmarks.length],
@@ -236,7 +314,7 @@ function renderStudyRecords(study: MapStudy): void {
     ...study.terrain.map((record) => ({
       id: record.id,
       label: record.label,
-      type: `Terrain · ${record.terrainType} · ${record.biome}`,
+      type: `Terrain · ${record.terrainType} · ${record.biome} · ${record.boundary.length} points · rel. ${record.relativeElevation.toFixed(2)}`,
       kind: "terrain",
     })),
     ...study.materials.map((record) => ({
@@ -251,7 +329,7 @@ function renderStudyRecords(study: MapStudy): void {
     const empty = document.createElement("p");
     empty.className = "study-empty";
     empty.textContent =
-      "No observations yet. Calibrate the map, then add landmarks, terrain regions, and material descriptions.";
+      "No observations yet. Trace map-relative terrain regions now; add meter-based landmarks and materials when a trustworthy scale is available.";
     elements.studyRecords.append(empty);
     return;
   }
@@ -357,11 +435,14 @@ async function generateWorld(): Promise<void> {
     const measuredDepthKm =
       (currentStudy.calibration?.depthMeters ?? 0) / 1000;
     elements.worldSubtitle.textContent = observationCount
-      ? `${settings.category} · ${observationCount} measured observations · ${settings.name}`
+      ? `${settings.category} · ${observationCount} map observations · ${settings.name}`
       : `${settings.category} · ${biomeLabel(settings.biome)} · reference only: ${settings.name}`;
     elements.statSize.textContent = currentStudy.calibration
       ? `${measuredWidthKm.toFixed(2)} × ${measuredDepthKm.toFixed(2)}`
       : `${settings.scale} × ${settings.scale}`;
+    elements.statSizeUnit.textContent = currentStudy.calibration
+      ? " KM MEASURED"
+      : " KM GENERATED";
     elements.statSeed.textContent = settings.seed.toUpperCase();
     showToast(
       observationCount
@@ -431,6 +512,8 @@ function exportManifest(): void {
     mapStudy: currentStudy
       ? {
           calibration: currentStudy.calibration,
+          terrainCoordinates: "normalized-map-relative",
+          relativeElevationRange: [-1, 1],
           observationCounts: {
             landmarks: currentStudy.landmarks.length,
             terrainRegions: currentStudy.terrain.length,
@@ -453,12 +536,24 @@ function exportManifest(): void {
 elements.edition.addEventListener("change", populateMaps);
 elements.edition.addEventListener("change", () => {
   currentStudy = null;
+  pendingRegionBoundary = [];
+  try {
+    renderRegionMap(getCurrentStudy());
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Could not load map study.");
+  }
 });
 elements.map.addEventListener("change", () => {
   currentStudy = null;
+  pendingRegionBoundary = [];
   const map = selectedMap();
   if (map) {
     elements.worldSubtitle.textContent = `${map.category} · reference selected: ${map.name}`;
+    try {
+      renderRegionMap(getCurrentStudy());
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Could not load map study.");
+    }
   }
 });
 elements.scale.addEventListener("input", () => {
@@ -494,6 +589,24 @@ elements.closeStudy.addEventListener("click", () => elements.studyDialog.close()
 elements.studyDialog.addEventListener("click", (event) => {
   if (event.target === elements.studyDialog) elements.studyDialog.close();
 });
+elements.regionMap.addEventListener("click", (event) => {
+  if (activeObservationTab !== "terrain") return;
+  const bounds = elements.regionMap.getBoundingClientRect();
+  if (bounds.width === 0 || bounds.height === 0) return;
+  pendingRegionBoundary.push({
+    x: Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width)),
+    z: Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height)),
+  });
+  renderRegionMap(getCurrentStudy());
+});
+elements.undoRegionPoint.addEventListener("click", () => {
+  pendingRegionBoundary.pop();
+  renderRegionMap(getCurrentStudy());
+});
+elements.clearRegionPoints.addEventListener("click", () => {
+  pendingRegionBoundary = [];
+  renderRegionMap(getCurrentStudy());
+});
 for (const tab of document.querySelectorAll<HTMLButtonElement>(
   "[data-observation-tab]",
 )) {
@@ -506,6 +619,24 @@ elements.calibrationForm.addEventListener("submit", (event) => {
   event.preventDefault();
   try {
     const study = getCurrentStudy();
+    const widthValue = formValue(elements.calibrationForm, "widthMeters");
+    const depthValue = formValue(elements.calibrationForm, "depthMeters");
+    if (!widthValue && !depthValue) {
+      if (study.landmarks.length + study.materials.length > 0) {
+        throw new Error(
+          "Remove meter-based landmarks and materials before clearing the physical scale.",
+        );
+      }
+      study.calibration = null;
+      persistStudy(study);
+      syncStudyDialog();
+      void generateWorld();
+      showToast("Physical map scale cleared. Relative regions remain unchanged.");
+      return;
+    }
+    if (!widthValue || !depthValue) {
+      throw new Error("Enter both map dimensions, or leave both blank.");
+    }
     const widthMeters = formNumber(elements.calibrationForm, "widthMeters");
     const depthMeters = formNumber(elements.calibrationForm, "depthMeters");
     if (widthMeters <= 0 || depthMeters <= 0) {
@@ -513,7 +644,6 @@ elements.calibrationForm.addEventListener("submit", (event) => {
     }
     const observations = [
       ...study.landmarks,
-      ...study.terrain,
       ...study.materials,
     ];
     if (
@@ -547,116 +677,129 @@ elements.observationForm.addEventListener("submit", (event) => {
   event.preventDefault();
   try {
     const study = getCurrentStudy();
-    if (!study.calibration) {
-      throw new Error("Save map width and depth before adding observations.");
-    }
     const label = formValue(elements.observationForm, "label");
-    const xMeters = formNumber(elements.observationForm, "xMeters");
-    const zMeters = formNumber(elements.observationForm, "zMeters");
-    if (
-      xMeters < 0 ||
-      xMeters > study.calibration.widthMeters ||
-      zMeters < 0 ||
-      zMeters > study.calibration.depthMeters
-    ) {
-      throw new Error("The observation coordinates must fall inside calibrated map bounds.");
-    }
-    const base = {
+    const metadata = {
       id: crypto.randomUUID(),
       label,
-      xMeters,
-      zMeters,
       confidence: formValue(
         elements.observationForm,
         "confidence",
       ) as ObservationConfidence,
       notes: formValue(elements.observationForm, "notes"),
     };
+    let updatedStudy = study;
 
-    if (activeObservationTab === "landmark") {
-      const widthMeters = formNumber(elements.observationForm, "widthMeters");
-      const depthMeters = formNumber(elements.observationForm, "depthMeters");
-      const heightMeters = formNumber(elements.observationForm, "heightMeters");
-      if (widthMeters <= 0 || depthMeters <= 0 || heightMeters <= 0) {
-        throw new Error("Landmark width, depth, and height must be greater than zero.");
+    if (activeObservationTab === "terrain") {
+      if (pendingRegionBoundary.length < 3) {
+        throw new Error("Add at least 3 boundary points on the overhead map.");
       }
-      study.landmarks.push({
-        ...base,
-        kind: formValue(elements.observationForm, "kind") as
-          | "building"
-          | "tree"
-          | "rock"
-          | "structure"
-          | "other",
-        elevationMeters: formNumber(
+      const region: TerrainRegionObservation = {
+        ...metadata,
+        terrainType: formValue(
           elements.observationForm,
-          "elevationMeters",
-        ),
-        widthMeters,
-        depthMeters,
-        heightMeters,
-        rotationDegrees: formNumber(
-          elements.observationForm,
-          "rotationDegrees",
-        ),
-      });
-    } else if (activeObservationTab === "terrain") {
-      const widthMeters = formNumber(elements.observationForm, "widthMeters");
-      const depthMeters = formNumber(elements.observationForm, "depthMeters");
-      if (widthMeters <= 0 || depthMeters <= 0) {
-        throw new Error("Terrain region width and depth must be greater than zero.");
-      }
-      study.terrain.push({
-        ...base,
-        terrainType: formValue(elements.observationForm, "terrainType") as
-          | "plain"
-          | "hill"
-          | "ridge"
-          | "valley"
-          | "cliff"
-          | "river"
-          | "lake"
-          | "coast"
-          | "road"
-          | "other",
+          "terrainType",
+        ) as TerrainRegionObservation["terrainType"],
         biome: formValue(elements.observationForm, "biome"),
-        widthMeters,
-        depthMeters,
-        elevationMeters: formNumber(
+        boundary: pendingRegionBoundary.map((point) => ({ ...point })),
+        relativeElevation: formNumber(
           elements.observationForm,
-          "elevationMeters",
+          "relativeElevation",
         ),
-      });
-    } else {
-      const widthMeters = formNumber(elements.observationForm, "widthMeters");
-      const depthMeters = formNumber(elements.observationForm, "depthMeters");
-      if (widthMeters <= 0 || depthMeters <= 0) {
-        throw new Error("Observed area width and depth must be greater than zero.");
+      };
+      updatedStudy = {
+        ...study,
+        terrain: [...study.terrain, region],
+      };
+      if (!isMapStudy(updatedStudy)) {
+        throw new Error(
+          "The region outline is invalid. Avoid crossing or overlapping its own boundary.",
+        );
       }
-      study.materials.push({
-        ...base,
-        materialType: formValue(
-          elements.observationForm,
-          "materialType",
-        ) as "ground" | "rock" | "wood" | "water" | "metal" | "other",
-        usedOn: formValue(elements.observationForm, "usedOn") as
-          | "terrain"
-          | "building"
-          | "vegetation"
-          | "rock"
-          | "water"
-          | "other",
-        approximateColor: formValue(
-          elements.observationForm,
-          "approximateColor",
-        ),
-        appearance: formValue(elements.observationForm, "appearance"),
-        widthMeters,
-        depthMeters,
-      });
+    } else {
+      if (!study.calibration) {
+        throw new Error(
+          "Save a trustworthy physical scale before adding meter-based landmarks or materials.",
+        );
+      }
+      const xMeters = formNumber(elements.observationForm, "xMeters");
+      const zMeters = formNumber(elements.observationForm, "zMeters");
+      if (
+        xMeters < 0 ||
+        xMeters > study.calibration.widthMeters ||
+        zMeters < 0 ||
+        zMeters > study.calibration.depthMeters
+      ) {
+        throw new Error(
+          "The observation coordinates must fall inside calibrated map bounds.",
+        );
+      }
+      const base = { ...metadata, xMeters, zMeters };
+      if (activeObservationTab === "landmark") {
+        const widthMeters = formNumber(elements.observationForm, "widthMeters");
+        const depthMeters = formNumber(elements.observationForm, "depthMeters");
+        const heightMeters = formNumber(elements.observationForm, "heightMeters");
+        if (widthMeters <= 0 || depthMeters <= 0 || heightMeters <= 0) {
+          throw new Error(
+            "Landmark width, depth, and height must be greater than zero.",
+          );
+        }
+        study.landmarks.push({
+          ...base,
+          kind: formValue(elements.observationForm, "kind") as
+            | "building"
+            | "tree"
+            | "rock"
+            | "structure"
+            | "other",
+          elevationMeters: formNumber(
+            elements.observationForm,
+            "elevationMeters",
+          ),
+          widthMeters,
+          depthMeters,
+          heightMeters,
+          rotationDegrees: formNumber(
+            elements.observationForm,
+            "rotationDegrees",
+          ),
+        });
+      } else {
+        const widthMeters = formNumber(elements.observationForm, "widthMeters");
+        const depthMeters = formNumber(elements.observationForm, "depthMeters");
+        if (widthMeters <= 0 || depthMeters <= 0) {
+          throw new Error(
+            "Observed area width and depth must be greater than zero.",
+          );
+        }
+        study.materials.push({
+          ...base,
+          materialType: formValue(
+            elements.observationForm,
+            "materialType",
+          ) as "ground" | "rock" | "wood" | "water" | "metal" | "other",
+          usedOn: formValue(elements.observationForm, "usedOn") as
+            | "terrain"
+            | "building"
+            | "vegetation"
+            | "rock"
+            | "water"
+            | "other",
+          approximateColor: formValue(
+            elements.observationForm,
+            "approximateColor",
+          ),
+          appearance: formValue(elements.observationForm, "appearance"),
+          widthMeters,
+          depthMeters,
+        });
+      }
     }
 
-    persistStudy(study);
+    persistStudy(updatedStudy);
+    if (activeObservationTab === "terrain") {
+      pendingRegionBoundary = [];
+      renderRegionMap(updatedStudy);
+    }
     (elements.observationForm.elements.namedItem("label") as HTMLInputElement).value = "";
     (elements.observationForm.elements.namedItem("notes") as HTMLInputElement).value = "";
     void generateWorld();

@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node scripts/test-world-seed.mjs"
+    "test": "node scripts/test-world-seed.mjs && node scripts/test-map-study.mjs"
   },
   "dependencies": {
     "three": "^0.187.0"

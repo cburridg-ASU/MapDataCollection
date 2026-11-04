@@ -23,7 +23,12 @@ import {
 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { proceduralSeed } from "./seed";
-import type { MapStudy, MaterialObservation, TerrainObservation } from "./map-study";
+import { isMapPointInsideRegion } from "./map-study";
+import type {
+  MapStudy,
+  MaterialObservation,
+  TerrainRegionObservation,
+} from "./map-study";
 
 export type BiomeId =
   | "temperate"
@@ -250,20 +255,118 @@ function observedColor(
 }
 
 function terrainObservationHeight(
-  observation: TerrainObservation,
-  xMeters: number,
-  zMeters: number,
-): number | null {
-  const weight = observationWeight(
-    xMeters,
-    zMeters,
-    observation.xMeters,
-    observation.zMeters,
-    observation.widthMeters,
-    observation.depthMeters,
+  observation: TerrainRegionObservation,
+  normalizedX: number,
+  normalizedZ: number,
+  sizeX: number,
+  sizeZ: number,
+  fadeDistance: number,
+): number {
+  if (
+    !isMapPointInsideRegion(
+      observation.boundary,
+      normalizedX,
+      normalizedZ,
+    )
+  ) {
+    return 0;
+  }
+
+  const mapX = normalizedX * sizeX;
+  const mapZ = normalizedZ * sizeZ;
+  let edgeDistance = Number.POSITIVE_INFINITY;
+  for (let index = 0; index < observation.boundary.length; index += 1) {
+    const start = observation.boundary[index]!;
+    const end =
+      observation.boundary[(index + 1) % observation.boundary.length]!;
+    const startX = start.x * sizeX;
+    const startZ = start.z * sizeZ;
+    const edgeX = (end.x - start.x) * sizeX;
+    const edgeZ = (end.z - start.z) * sizeZ;
+    const edgeLengthSquared = edgeX * edgeX + edgeZ * edgeZ;
+    const projection =
+      edgeLengthSquared === 0
+        ? 0
+        : Math.min(
+            1,
+            Math.max(
+              0,
+              ((mapX - startX) * edgeX + (mapZ - startZ) * edgeZ) /
+                edgeLengthSquared,
+            ),
+          );
+    edgeDistance = Math.min(
+      edgeDistance,
+      Math.hypot(mapX - (startX + projection * edgeX), mapZ - (startZ + projection * edgeZ)),
+    );
+  }
+  const fade = Math.min(1, edgeDistance / fadeDistance);
+  return fade * fade * (3 - 2 * fade);
+}
+
+function terrainRegionFadeDistance(
+  observation: TerrainRegionObservation,
+  sizeX: number,
+  sizeZ: number,
+): number {
+  const xs = observation.boundary.map((point) => point.x * sizeX);
+  const zs = observation.boundary.map((point) => point.z * sizeZ);
+  const regionSpan = Math.min(
+    Math.max(...xs) - Math.min(...xs),
+    Math.max(...zs) - Math.min(...zs),
   );
-  if (weight <= 0) return null;
-  return weight;
+  return Math.max(
+    Math.min(Math.max(sizeX, sizeZ) * 0.012, regionSpan * 0.2),
+    0.001,
+  );
+}
+
+function regionPalette(
+  observation: TerrainRegionObservation,
+  fallback: BiomePalette,
+): BiomePalette {
+  const palette = paletteForBiome(observation.biome, fallback);
+  if (observation.terrainType === "river" || observation.terrainType === "lake") {
+    return {
+      ...palette,
+      bands: palette.bands.map(([height]) => [height, palette.water]),
+    };
+  }
+  if (observation.terrainType === "road") {
+    return {
+      ...palette,
+      bands: [
+        [0.08, "#66543d"],
+        [0.38, "#816c4b"],
+        [0.7, "#99805b"],
+        [0.88, "#a58b62"],
+        [1, "#b79b70"],
+      ],
+    };
+  }
+  return palette;
+}
+
+function regionRoughness(terrainType: TerrainRegionObservation["terrainType"]): number {
+  switch (terrainType) {
+    case "plain":
+      return 0.18;
+    case "hill":
+      return 0.5;
+    case "ridge":
+    case "cliff":
+      return 0.85;
+    case "valley":
+      return 0.3;
+    case "river":
+    case "lake":
+    case "road":
+      return 0.08;
+    case "coast":
+      return 0.25;
+    case "other":
+      return 0.4;
+  }
 }
 
 function disposeObject(object: Object3D): void {
@@ -385,6 +488,10 @@ export class WorldBuilder {
     const geometry = new PlaneGeometry(sizeX, sizeZ, segments, segments);
     const positions = geometry.getAttribute("position");
     const colors: number[] = [];
+    const terrainRegions = (study?.terrain ?? []).map((region) => ({
+      region,
+      fadeDistance: terrainRegionFadeDistance(region, sizeX, sizeZ),
+    }));
 
     for (let index = 0; index < positions.count; index += 1) {
       const x = positions.getX(index);
@@ -399,45 +506,34 @@ export class WorldBuilder {
         seed,
         relief,
       );
-      let colorPalette = palette;
-      if (study?.calibration) {
-        for (const observation of study.terrain) {
-          const weight = terrainObservationHeight(
-            observation,
-            xMeters,
-            zMeters,
-          );
-          if (weight === null) continue;
-          height =
-            height * (1 - weight) +
-            (observation.elevationMeters / 1000) * weight;
-          colorPalette = paletteForBiome(observation.biome, colorPalette);
-          if (
-            observation.terrainType === "river" ||
-            observation.terrainType === "lake"
-          ) {
-            colorPalette = {
-              ...colorPalette,
-              bands: [
-                [0.08, colorPalette.water],
-                [0.38, colorPalette.water],
-                [0.7, colorPalette.water],
-                [0.88, colorPalette.water],
-                [1, colorPalette.water],
-              ],
-            };
-          } else if (
-            observation.terrainType === "cliff" ||
-            observation.terrainType === "ridge"
-          ) {
-            height += (observation.terrainType === "cliff" ? 0.04 : 0.02) * size * weight;
-          } else if (observation.terrainType === "valley") {
-            height -= 0.015 * size * weight;
-          }
-        }
+      const activeRegions: { region: TerrainRegionObservation; weight: number }[] =
+        [];
+      for (const { region, fadeDistance } of terrainRegions) {
+        const weight = terrainObservationHeight(
+          region,
+          normalizedX,
+          normalizedZ,
+          sizeX,
+          sizeZ,
+          fadeDistance,
+        );
+        if (weight === 0) continue;
+        const regionHeight =
+          region.relativeElevation * relief +
+          terrainHeight(normalizedX, normalizedZ, seed, relief) *
+            regionRoughness(region.terrainType);
+        height = height * (1 - weight) + regionHeight * weight;
+        activeRegions.push({ region, weight });
       }
       positions.setZ(index, height);
-      const color = terrainColor(height, relief, colorPalette.bands);
+      const color = terrainColor(height, relief, palette.bands);
+      for (const { region, weight } of activeRegions) {
+        const colorPalette = regionPalette(region, palette);
+        color.lerp(
+          terrainColor(height, relief, colorPalette.bands),
+          weight,
+        );
+      }
       if (study?.calibration) {
         for (const material of study.materials) {
           if (material.usedOn !== "terrain") continue;
