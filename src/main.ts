@@ -108,6 +108,8 @@ function readSettings(): WorldSettings {
   }
 
   return {
+    editionId: edition.id,
+    mapId: map.id,
     name: map.name,
     category: map.category,
     edition: edition.title,
@@ -144,7 +146,9 @@ async function generateWorld(): Promise<void> {
     elements.worldSubtitle.textContent = `${settings.category} · ${biomeLabel(settings.biome)} · inspired by ${settings.name}`;
     elements.statSize.textContent = `${settings.scale} × ${settings.scale}`;
     elements.statSeed.textContent = settings.seed.toUpperCase();
-    showToast("Environment generated from your settings.");
+    showToast(
+      "Procedural terrain generated from your seed and selected map reference; no WoW terrain data is included.",
+    );
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Could not generate the environment.");
   } finally {

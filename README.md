@@ -22,6 +22,11 @@ vegetation, and ruins. **Generate environment** rebuilds the scene. Drag to
 orbit, scroll to zoom, and right-drag to pan. Export the generated scene as GLB
 or download its JSON settings manifest.
 
+The selected edition and map ID are combined with the world seed to create a
+different reproducible procedural landscape for each reference. The catalog
+contains labels only; it does not contain WoW terrain, dimensions, or geometry,
+so generated environments are not reconstructions of the selected maps.
+
 ## GitHub Pages
 
 The workflow in `.github/workflows/pages.yml` builds and deploys the site when

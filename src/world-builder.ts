@@ -22,6 +22,7 @@ import {
   type BufferGeometry,
 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { proceduralSeed } from "./seed";
 
 export type BiomeId =
   | "temperate"
@@ -32,6 +33,8 @@ export type BiomeId =
   | "fel";
 
 export interface WorldSettings {
+  editionId: string;
+  mapId: string;
   name: string;
   category: string;
   edition: string;
@@ -138,14 +141,6 @@ const palettes: Record<BiomeId, BiomePalette> = {
     ],
   },
 };
-
-function seedNumber(seed: string): number {
-  let value = 2166136261;
-  for (let index = 0; index < seed.length; index += 1) {
-    value = Math.imul(value ^ seed.charCodeAt(index), 16777619);
-  }
-  return value >>> 0;
-}
 
 function randomGenerator(seed: number): () => number {
   let value = seed;
@@ -300,7 +295,11 @@ export class WorldBuilder {
     this.world = new Object3D();
     this.world.name = "Generated Environment";
     this.activeSettings = { ...settings };
-    const seed = seedNumber(settings.seed);
+    const seed = proceduralSeed(
+      settings.seed,
+      settings.editionId,
+      settings.mapId,
+    );
     const random = randomGenerator(seed);
     const size = settings.scale;
     const relief = settings.relief * 0.48;

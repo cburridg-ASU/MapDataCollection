@@ -212,6 +212,7 @@ button { color: inherit; }
   letter-spacing: 0.025em;
   line-height: 1.5;
 }
+.reference-note { margin-top: 5px; color: #78857a; }
 .field-note-error { color: #e39b7e; }
 .field-row { display: flex; align-items: center; justify-content: space-between; }
 .field-row .field-label { margin-bottom: 7px; }
